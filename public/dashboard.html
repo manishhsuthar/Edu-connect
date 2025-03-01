@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduConnect Hub Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      display: flex;
+      width: 100%;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+    .sidebar {
+      width: 250px;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      background-color: #fff;
+      height: 100vh;
+      position: fixed;
+    }
+    .sidebar-logo {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+    .sidebar-nav {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar-nav li {
+      margin-bottom: 20px;
+    }
+    .sidebar-nav a {
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
+    .sidebar-nav i {
+      margin-right: 10px;
+      color: #007bff;
+    }
+    .main {
+      flex: 2;
+      padding: 20px;
+      margin-left: 270px; /* Adjust for fixed sidebar width */
+      background-color: #fff;
+      min-height: 100vh;
+    }
+    .post {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .post-header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .post-header span {
+      font-weight: bold;
+    }
+    .post-title {
+      padding: 10px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+    .post-content {
+      padding: 10px;
+      font-size: 16px;
+      color: #555;
+    }
+    .post-footer {
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .post-footer div {
+      display: flex;
+      align-items: center;
+    }
+    .post-footer i {
+      margin-right: 5px;
+      color: #007bff;
+      cursor: pointer;
+    }
+    .right-sidebar {
+      width: 300px;
+      padding: 20px;
+      background-color: #fff;
+      position: fixed;
+      right: 0;
+      height: 100vh;
+      border-left: 1px solid #ddd;
+    }
+    .right-sidebar-profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .right-sidebar-profile img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .right-sidebar-profile div {
+      flex: 1;
+    }
+    .right-sidebar-profile button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .suggestions {
+      margin-top: 20px;
+    }
+    .suggestion {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .suggestion img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .suggestion div {
+      flex: 1;
+    }
+    .suggestion button {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="sidebar-logo">EduConnect Hub</div>
+      <ul class="sidebar-nav">
+        <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="#"><i class="fas fa-search"></i> Search</a></li>
+        <li><a href="#"><i class="fas fa-book"></i> Courses</a></li>
+        <li><a href="#"><i class="fas fa-bookmark"></i> Resources</a></li>
+        <li><a href="#"><i class="fas fa-comments"></i> Discussions</a></li>
+        <li><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
+        <li><a href="#"><i class="fas fa-user"></i> Profile</a></li>
+        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="post">
+        <div class="post-header">
+          <img src="https://via.placeholder.com/40" alt="User">
+          <span>Instructor Name</span>
+        </div>
+        <div class="post-title">Introduction to Machine Learning</div>
+        <div class="post-content">
+          This course provides a comprehensive introduction to the fundamentals of machine learning, covering key concepts and practical applications.
+        </div>
+        <div class="post-footer">
+          <div><i class="fas fa-thumbs-up"></i> 120 Likes</div>
+          <div><i class="fas fa-comments"></i> 20 Comments</div>
+          <div><i class="fas fa-share"></i> Share</div>
+        </div>
+      </div>
+      <!-- Repeat .post for more posts -->
+    </div>
+    <div class="right-sidebar">
+      <div class="right-sidebar-profile">
+        <img src="https://via.placeholder.com/56" alt="User">
+        <div>
+          <span>Your Profile</span>
+          <button>Switch</button>
+        </div>
+      </div>
+      <div class="suggestions">
+        <div class="suggestion">
+          <img src="https://via.placeholder.com/40" alt="User">
+          <div>
+            <span>Suggested Course</span>
+            <span>Recommended for your learning path</span>
+          </div>
+          <button>Enroll</button>
+        </div>
+        <!-- Repeat .suggestion for more suggestions -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>
