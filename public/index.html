@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect Hub - Card Style Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #334155;
+            --secondary: #64748b;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --error: #ef4444;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+            padding: 20px;
+        }
+
+        .card-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            perspective: 1000px; /* Add perspective to control 3D space */
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-side {
+            transform: rotateY(0deg);
+        }
+
+        .signup-side {
+            transform: rotateY(180deg);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: var(--accent);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            transform: rotate(-10deg);
+            transition: transform 0.3s ease;
+        }
+
+        .logo img {
+            width: 170px;
+            height: 100px;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo:hover {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .form-group:nth-child(2) { animation-delay: 0.1s; }
+        .form-group:nth-child(3) { animation-delay: 0.2s; }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: var(--primary);
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            outline: none;
+        }
+
+        .input-label {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: var(--card-bg);
+            padding: 0 5px;
+        }
+
+        .input-field:focus + .input-label,
+        .input-field:not(:placeholder-shown) + .input-label {
+            top: 0;
+            font-size: 14px;
+            color: var(--accent);
+        }
+
+        .submit-btn {
+            padding: 15px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--secondary);
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider span {
+            padding: 0 10px;
+        }
+
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .social-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 20px;
+            color: var(--secondary);
+        }
+
+        .switch-form a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card">
+            <!-- Login Side -->
+            <div class="card-face login-side">
+                <div class="form-header">
+                    <div class="logo">
+                        <img src="images/logo.png" alt="Logo">
+                    </div>
+                    <h2>Welcome Back</h2>
+                    <p class="subtitle">Sign in to continue learning</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" class="input-field" id="loginEmail" placeholder=" " required>
+                        <label class="input-label">Email Address</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" class="input-field" id="loginPassword" placeholder=" " required>
+                        <label class="input-label">Password</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Sign In</button>
+                </form>
+
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+
+                <div class="social-login">
+                    <div class="social-btn" id="googleLogin">G</div>
+                    <div class="social-btn" id="facebookLogin">f</div>
+                    <div class="social-btn" id="linkedinLogin">in</div>
+                </div>
+
+                <div class="switch-form">
+                    <p>Don't have an account? <a href="#" onclick="document.querySelector('.card').classList.add('flipped')">Sign Up</a></p>
+                </div>
+            </div>
+
+            <!-- Signup Side -->
+            <div class="card-face signup-side">
+                <div class="form-header">
+                    <div class="logo">
+                        <img src="images/logo.png" alt="Logo">
+                    </div>
+                    <h2>Create Account</h2>
+                    <p class="subtitle">Join our learning community</p>
+                </div>
+
+                <form id="signupForm">
+                    <div class="form-group">
+                        <input type="text" class="input-field" id="signupName" placeholder=" " required>
+                        <label class="input-label">Full Name</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="email" class="input-field" id="signupEmail" placeholder=" " required>
+                        <label class="input-label">Email Address</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="password" class="input-field" id="signupPassword" placeholder=" " required>
+                        <label class="input-label">Password</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Create Account</button>
+                </form>
+
+                <div class="social-login">
+                    <div class="social-btn" id="googleSignup">G</div>
+                    <div class="social-btn" id="facebookSignup">f</div>
+                    <div class="social-btn" id="linkedinSignup">in</div>
+                </div>
+
+                <div class="switch-form">
+                    <p>Already have an account? <a href="#" onclick="document.querySelector('.card').classList.remove('flipped')">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: email, password })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                window.location.href = `/dashboard?token=${data.token}`;
+            } else {
+                alert('Login failed');
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: email, password })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                window.location.href = `/dashboard?token=${data.token}`;
+            } else {
+                alert('Sign up failed');
+            }
+        });
+
+        document.getElementById('googleLogin').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+
+        document.getElementById('facebookLogin').addEventListener('click', () => {
+            window.location.href = '/auth/facebook';
+        });
+
+        document.getElementById('linkedinLogin').addEventListener('click', () => {
+            window.location.href = '/auth/linkedin';
+        });
+
+        document.getElementById('googleSignup').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+
+        document.getElementById('facebookSignup').addEventListener('click', () => {
+            window.location.href = '/auth/facebook';
+        });
+
+        document.getElementById('linkedinSignup').addEventListener('click', () => {
+            window.location.href = '/auth/linkedin';
+        });
+    </script>
+</body>
+</html>
