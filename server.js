@@ -13,7 +13,7 @@ const app = express();
 const port = 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); // Serving static files from the 'public' folder
 
 // MongoDB connection URI
 const uri = "mongodb://localhost:27017";
@@ -30,7 +30,7 @@ async function run() {
     db = client.db('authDatabase');
     users = db.collection('users');
 
-    // Passport configuration
+    // Passport configuration for Google OAuth
     passport.use(new GoogleStrategy({
       clientID: 'YOUR_GOOGLE_CLIENT_ID',
       clientSecret: 'YOUR_GOOGLE_CLIENT_SECRET',
@@ -48,6 +48,7 @@ async function run() {
       }
     }));
 
+    // Passport configuration for Facebook OAuth
     passport.use(new FacebookStrategy({
       clientID: 'YOUR_FACEBOOK_CLIENT_ID',
       clientSecret: 'YOUR_FACEBOOK_CLIENT_SECRET',
@@ -65,6 +66,7 @@ async function run() {
       }
     }));
 
+    // Passport configuration for LinkedIn OAuth
     passport.use(new LinkedInStrategy({
       clientID: 'YOUR_LINKEDIN_CLIENT_ID',
       clientSecret: 'YOUR_LINKEDIN_CLIENT_SECRET',
@@ -155,12 +157,16 @@ async function run() {
       res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
     });
 
+    // Route to serve login.html (in case of Cannot GET / error)
+    app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'login.html'));  // Change to login.html
+    });
+
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+  } catch (err) {
+    console.error(err);
   }
 }
 
