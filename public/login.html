@@ -557,111 +557,130 @@ a:hover {
 </div>
 
 <script>
-    // Toggle between login and register forms
-    const formContainer = document.getElementById('formContainer');
-    const loginBtn = document.getElementById('loginBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const slider = document.getElementById('slider');
-    const toRegisterLink = document.getElementById('toRegisterLink');
-    const toLoginLink = document.getElementById('toLoginLink');
+    // Replace the existing JavaScript section in your login.html with this improved version
 
-    function showRegisterForm() {
-        formContainer.classList.add('show-register');
-        registerBtn.classList.add('active');
-        loginBtn.classList.remove('active');
-        slider.classList.add('right');
-    }
+// Toggle between login and register forms
+const formContainer = document.getElementById('formContainer');
+const loginBtn = document.getElementById('loginBtn');
+const registerBtn = document.getElementById('registerBtn');
+const slider = document.getElementById('slider');
+const toRegisterLink = document.getElementById('toRegisterLink');
+const toLoginLink = document.getElementById('toLoginLink');
 
-    function showLoginForm() {
-        formContainer.classList.remove('show-register');
-        loginBtn.classList.add('active');
-        registerBtn.classList.remove('active');
-        slider.classList.remove('right');
-    }
+function showRegisterForm() {
+    formContainer.classList.add('show-register');
+    registerBtn.classList.add('active');
+    loginBtn.classList.remove('active');
+    slider.classList.add('right');
+}
 
-    registerBtn.addEventListener('click', showRegisterForm);
-    loginBtn.addEventListener('click', showLoginForm);
-    toRegisterLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showRegisterForm();
+function showLoginForm() {
+    formContainer.classList.remove('show-register');
+    loginBtn.classList.add('active');
+    registerBtn.classList.remove('active');
+    slider.classList.remove('right');
+}
+
+registerBtn.addEventListener('click', showRegisterForm);
+loginBtn.addEventListener('click', showLoginForm);
+toRegisterLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    showRegisterForm();
+});
+toLoginLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    showLoginForm();
+});
+
+// Show error message
+function showError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
+// Clear error messages
+function clearErrors() {
+    const errorElements = document.querySelectorAll('.error-message');
+    errorElements.forEach(element => {
+        element.textContent = '';
+        element.style.display = 'none';
     });
-    toLoginLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showLoginForm();
+}
+
+// Show loading state
+function showLoading(buttonId, originalText) {
+    const btn = document.getElementById(buttonId);
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    btn.disabled = true;
+}
+
+// Reset button state
+function resetButton(buttonId, originalText) {
+    const btn = document.getElementById(buttonId);
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    btn.style.background = '';
+}
+
+// Form field animations
+const inputs = document.querySelectorAll('input');
+inputs.forEach(input => {
+    input.addEventListener('focus', () => {
+        input.parentElement.querySelector('i').style.color = 'var(--text-color)';
     });
-
-    // Show error message
-    function showError(elementId, message) {
-        const errorElement = document.getElementById(elementId);
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-    }
-
-    // Clear error messages
-    function clearErrors() {
-        const errorElements = document.querySelectorAll('.error-message');
-        errorElements.forEach(element => {
-            element.textContent = '';
-            element.style.display = 'none';
-        });
-    }
-
-    // Form field animations
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('focus', () => {
-            input.parentElement.querySelector('i').style.color = 'var(--text-color)';
-        });
-        
-        input.addEventListener('blur', () => {
-            if (!input.value) {
-                input.parentElement.querySelector('i').style.color = 'var(--accent-color)';
-            }
-        });
+    
+    input.addEventListener('blur', () => {
+        if (!input.value) {
+            input.parentElement.querySelector('i').style.color = 'var(--accent-color)';
+        }
     });
+});
 
-    // Handle User Registration
-    document.getElementById('register-btn').addEventListener('click', function () {
-        clearErrors();
-        
-        const name = document.getElementById('register-name').value;
-        const email = document.getElementById('register-email').value;
-        const password = document.getElementById('register-password').value;
-        const confirmPassword = document.getElementById('register-confirm-password').value;
+// Handle User Registration
+document.getElementById('register-btn').addEventListener('click', async function () {
+    clearErrors();
+    
+    const name = document.getElementById('register-name').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
 
-        // Validate inputs
-        let isValid = true;
-        
-        if (!name) {
-            showError('register-name-error', 'Name is required');
-            isValid = false;
-        }
-        
-        if (!email) {
-            showError('register-email-error', 'Email is required');
-            isValid = false;
-        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-            showError('register-email-error', 'Please enter a valid email');
-            isValid = false;
-        }
-        
-        if (!password) {
-            showError('register-password-error', 'Password is required');
-            isValid = false;
-        } else if (password.length < 6) {
-            showError('register-password-error', 'Password must be at least 6 characters');
-            isValid = false;
-        }
-        
-        if (password !== confirmPassword) {
-            showError('register-confirm-error', 'Passwords do not match');
-            isValid = false;
-        }
-        
-        if (!isValid) return;
+    // Validate inputs
+    let isValid = true;
+    
+    if (!name) {
+        showError('register-name-error', 'Name is required');
+        isValid = false;
+    }
+    
+    if (!email) {
+        showError('register-email-error', 'Email is required');
+        isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        showError('register-email-error', 'Please enter a valid email');
+        isValid = false;
+    }
+    
+    if (!password) {
+        showError('register-password-error', 'Password is required');
+        isValid = false;
+    } else if (password.length < 6) {
+        showError('register-password-error', 'Password must be at least 6 characters');
+        isValid = false;
+    }
+    
+    if (password !== confirmPassword) {
+        showError('register-confirm-error', 'Passwords do not match');
+        isValid = false;
+    }
+    
+    if (!isValid) return;
 
-        // Send registration request to server
-        fetch('/signup', {
+    showLoading('register-btn', 'Create Account');
+
+    try {
+        const response = await fetch('/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -671,56 +690,59 @@ a:hover {
                 email: email,
                 password: password
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                // Add success animation
-                const btn = document.getElementById('register-btn');
-                btn.innerHTML = '<i class="fas fa-check"></i> Success!';
-                btn.style.background = 'var(--success-color)';
-                
-                setTimeout(() => {
-                    alert("Registration successful! Redirecting to dashboard...");
-                    window.location.href = "/dashboard";
-                }, 1500);
-            } else {
-                showError('register-error', data.error || 'Registration failed');
-            }
-        })
-        .catch(error => {
-            showError('register-error', 'An error occurred during registration');
-            console.error('Error:', error);
         });
-    });
 
-    // Handle User Login
-    document.getElementById('login-btn').addEventListener('click', function () {
-        clearErrors();
+        const data = await response.json();
         
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-
-        // Validate inputs
-        let isValid = true;
-        
-        if (!email) {
-            showError('login-email-error', 'Email is required');
-            isValid = false;
-        } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-            showError('login-email-error', 'Please enter a valid email');
-            isValid = false;
+        if (data.success) {
+            // Show success state
+            const btn = document.getElementById('register-btn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Success!';
+            btn.style.background = 'var(--success-color)';
+            
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 1000);
+        } else {
+            resetButton('register-btn', 'Create Account');
+            showError('register-error', data.message || data.error || 'Registration failed');
         }
-        
-        if (!password) {
-            showError('login-password-error', 'Password is required');
-            isValid = false;
-        }
-        
-        if (!isValid) return;
+    } catch (error) {
+        resetButton('register-btn', 'Create Account');
+        showError('register-error', 'Network error. Please check your connection and try again.');
+        console.error('Registration error:', error);
+    }
+});
 
-        // Send login request to server
-        fetch('/login', {
+// Handle User Login
+document.getElementById('login-btn').addEventListener('click', async function () {
+    clearErrors();
+    
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    // Validate inputs
+    let isValid = true;
+    
+    if (!email) {
+        showError('login-email-error', 'Email is required');
+        isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        showError('login-email-error', 'Please enter a valid email');
+        isValid = false;
+    }
+    
+    if (!password) {
+        showError('login-password-error', 'Password is required');
+        isValid = false;
+    }
+    
+    if (!isValid) return;
+
+    showLoading('login-btn', 'Sign In');
+
+    try {
+        const response = await fetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -729,28 +751,42 @@ a:hover {
                 email: email,
                 password: password
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Add success animation
-                const btn = document.getElementById('login-btn');
-                btn.innerHTML = '<i class="fas fa-check"></i> Success!';
-                btn.style.background = 'var(--success-color)';
-                
-                setTimeout(() => {
-                    alert("Login successful! Redirecting to dashboard...");
-                    window.location.href = "/dashboard";
-                }, 1500);
-            } else {
-                showError('login-error', data.message || 'Invalid credentials');
-            }
-        })
-        .catch(error => {
-            showError('login-error', 'An error occurred during login');
-            console.error('Error:', error);
         });
-    });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success state
+            const btn = document.getElementById('login-btn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Success!';
+            btn.style.background = 'var(--success-color)';
+            
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 1000);
+        } else {
+            resetButton('login-btn', 'Sign In');
+            showError('login-error', data.message || 'Invalid credentials');
+        }
+    } catch (error) {
+        resetButton('login-btn', 'Sign In');
+        showError('login-error', 'Network error. Please check your connection and try again.');
+        console.error('Login error:', error);
+    }
+});
+
+// Handle Enter key press for forms
+document.getElementById('login-password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('login-btn').click();
+    }
+});
+
+document.getElementById('register-confirm-password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('register-btn').click();
+    }
+});
 </script>
 </body>
 </html>
