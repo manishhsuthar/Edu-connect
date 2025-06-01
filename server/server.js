@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,18 +25,35 @@ const sessionMiddleware = session({
 });
 app.use(sessionMiddleware);
 
-// Static files
-app.use(express.static("public"));
+// Static files - Updated to serve from client/public
+app.use(express.static(path.join(__dirname, "../client/public")));
 
 // MongoDB connection with better error handling
-mongoose.connect("mongodb://localhost:27017/chatApp", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => {
-    console.log('✅ Connected to MongoDB');
-}).catch(err => {
-    console.error('❌ MongoDB connection error:', err);
-});
+const connectDB = async () => {
+    try {
+        const conn = await mongoose.connect("mongodb://127.0.0.1:27017/chatApp", {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        
+        console.log('✅ Connected to MongoDB:', conn.connection.host);
+        console.log('📊 Database name:', conn.connection.name);
+    } catch (error) {
+        console.error('❌ MongoDB connection error:', error.message);
+        
+        if (error.message.includes('ECONNREFUSED')) {
+            console.log('\n💡 SOLUTIONS:');
+            console.log('1. Run Command Prompt as Administrator');
+            console.log('2. Run: net start MongoDB');
+            console.log('3. Or manually start: mongod --dbpath "C:\\data\\db"');
+        }
+        
+        console.log('⚠️ Server running without database connection');
+    }
+};
+
+// Call the connection function
+connectDB();
 
 // Check if user is authenticated
 function isAuthenticated(req, res, next) {
@@ -55,23 +73,58 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+// Updated message schema with room field
 const messageSchema = new mongoose.Schema({
     sender: String,
     message: String,
+    room: String, // Added room field for sections
     timestamp: { type: Date, default: Date.now },
 });
 
 const User = mongoose.model("User", userSchema);
 const Message = mongoose.model("Message", messageSchema);
 
-// Root route to serve login page
+// Root route to serve login page - Updated path
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/login.html');
+    res.sendFile(path.join(__dirname, '../client/public/login.html'));
 });
 
-// Dashboard route with authentication
+// Dashboard route with authentication - Updated path
 app.get('/dashboard', isAuthenticated, (req, res) => {
-    res.sendFile(__dirname + '/public/dashboard.html');
+    res.sendFile(path.join(__dirname, '../client/public/dashboard.html'));
+});
+
+// NEW: Get messages for specific room/section
+app.get('/messages/:room', isAuthenticated, async (req, res) => {
+    try {
+        const { room } = req.params;
+        const messages = await Message.find({ room: room })
+            .sort({ timestamp: 1 }) // Sort by oldest first
+            .limit(50); // Limit to last 50 messages
+        
+        res.json({
+            success: true,
+            room: room,
+            messages: messages
+        });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// NEW: Get all available rooms/sections
+app.get('/rooms', isAuthenticated, async (req, res) => {
+    try {
+        const rooms = await Message.distinct('room');
+        res.json({
+            success: true,
+            rooms: rooms.length > 0 ? rooms : ['general']
+        });
+    } catch (error) {
+        console.error('Error fetching rooms:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // DATABASE CHECK ROUTES
@@ -125,12 +178,19 @@ app.get('/debug/users', async (req, res) => {
     }
 });
 
-// View all messages (for debugging)
+// View all messages (for debugging) - Updated with room filtering
 app.get('/debug/messages', async (req, res) => {
     try {
-        const messages = await Message.find().sort({ timestamp: -1 }).limit(20);
+        const { room } = req.query; // Optional room filter
+        const query = room ? { room: room } : {};
+        
+        const messages = await Message.find(query)
+            .sort({ timestamp: -1 })
+            .limit(50);
+            
         res.json({
             status: 'success',
+            room: room || 'all',
             count: messages.length,
             messages: messages
         });
@@ -232,30 +292,79 @@ io.use((socket, next) => {
     sessionMiddleware(socket.request, {}, next);
 });
 
+// UPDATED Socket.io implementation with room support
 io.on('connection', (socket) => {
-    console.log('User connected');
+    console.log('User connected:', socket.id);
     
-    socket.on('message', async (msg) => {
+    // Handle joining a room/section
+    socket.on('join-room', (roomName) => {
+        socket.join(roomName);
+        console.log(`User ${socket.request.session?.user || 'Unknown'} joined room: ${roomName}`);
+        
+        // Send recent messages for this room when user joins
+        Message.find({ room: roomName })
+            .sort({ timestamp: 1 })
+            .limit(20)
+            .then(messages => {
+                socket.emit('room-messages', {
+                    room: roomName,
+                    messages: messages
+                });
+            })
+            .catch(err => console.error('Error loading room messages:', err));
+    });
+    
+    // Handle leaving a room
+    socket.on('leave-room', (roomName) => {
+        socket.leave(roomName);
+        console.log(`User left room: ${roomName}`);
+    });
+    
+    // Handle messages with room information - UPDATED
+    socket.on('message', async (data) => {
         if (socket.request.session.user) {
             const username = socket.request.session.user;
             
-            // Save message to database
+            // Handle both old format (just string) and new format (object with room)
+            let message, room;
+            if (typeof data === 'string') {
+                message = data;
+                room = 'general'; // Default room for old clients
+            } else {
+                message = data.message;
+                room = data.room || 'general';
+            }
+            
+            // Save message to database with room information
             try {
                 const newMessage = new Message({
                     sender: username,
-                    message: msg
+                    message: message,
+                    room: room
                 });
                 await newMessage.save();
+                
+                // Broadcast message only to users in the same room
+                const messageData = {
+                    user: username,
+                    text: message,
+                    room: room,
+                    timestamp: newMessage.timestamp
+                };
+                
+                // Send to all users in the specific room
+                io.to(room).emit('message', messageData);
+                
+                console.log(`Message saved and sent to room ${room}:`, messageData);
             } catch (error) {
                 console.error('Error saving message:', error);
+                socket.emit('error', { message: 'Failed to save message' });
             }
-            
-            io.emit('message', { user: username, text: msg });
         }
     });
     
     socket.on('disconnect', () => {
-        console.log('User disconnected');
+        console.log('User disconnected:', socket.id);
     });
 });
 
@@ -280,4 +389,6 @@ server.listen(3000, () => {
     console.log("📊 Database check: http://localhost:3000/check-db");
     console.log("👥 Debug users: http://localhost:3000/debug/users");
     console.log("💬 Debug messages: http://localhost:3000/debug/messages");
+    console.log("🏠 Debug messages by room: http://localhost:3000/debug/messages?room=general");
+    console.log("📂 Available rooms: http://localhost:3000/rooms");
 });
