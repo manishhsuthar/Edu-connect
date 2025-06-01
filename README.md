@@ -65,6 +65,7 @@ node server.js
 - MongoDB
 - Tailwind CSS
 
+![App Screenshot](./demo/Register.png)
 ---
 
 Made with ❤️ to improve academic communication
