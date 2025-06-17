@@ -190,16 +190,45 @@ body {
     position: relative;
 }
 
-.form-group i {
+.form-group i.field-icon {
     position: absolute;
     left: 15px;
     top: 16px;
     color: var(--accent-color);
     transition: var(--transition);
+    z-index: 1;
 }
 
-.form-group input:focus + i {
+.form-group input:focus + i.field-icon {
     color: var(--text-color);
+}
+
+/* Password toggle button styles */
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    z-index: 2;
+    transition: var(--transition);
+}
+
+.toggle-password:hover {
+    color: var(--text-color);
+}
+
+.toggle-password:focus {
+    outline: none;
 }
 
 input {
@@ -212,6 +241,10 @@ input {
     background-color: rgba(30, 30, 30, 0.8);
     color: var(--text-color);
     font-family: 'Montserrat', sans-serif;
+}
+
+.password-container input {
+    padding-right: 45px; /* Make room for the toggle button */
 }
 
 input:focus {
@@ -485,13 +518,18 @@ a:hover {
                 
                 <div class="form-group">
                     <input type="email" id="login-email" placeholder="Email" required>
-                    <i class="fas fa-envelope"></i>
+                    <i class="fas fa-envelope field-icon"></i>
                     <div class="error-message" id="login-email-error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <input type="password" id="login-password" placeholder="Password" required>
-                    <i class="fas fa-lock"></i>
+                    <div class="password-container">
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <i class="fas fa-lock field-icon"></i>
+                        <button type="button" class="toggle-password" onclick="toggleLoginPassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <div class="error-message" id="login-password-error"></div>
                 </div>
                 
@@ -514,25 +552,35 @@ a:hover {
                 
                 <div class="form-group">
                     <input type="text" id="register-name" placeholder="Full Name" required>
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user field-icon"></i>
                     <div class="error-message" id="register-name-error"></div>
                 </div>
                 
                 <div class="form-group">
                     <input type="email" id="register-email" placeholder="Email" required>
-                    <i class="fas fa-envelope"></i>
+                    <i class="fas fa-envelope field-icon"></i>
                     <div class="error-message" id="register-email-error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <input type="password" id="register-password" placeholder="Password" required>
-                    <i class="fas fa-lock"></i>
+                    <div class="password-container">
+                        <input type="password" id="register-password" placeholder="Password" required>
+                        <i class="fas fa-lock field-icon"></i>
+                        <button type="button" class="toggle-password" onclick="toggleRegisterPassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <div class="error-message" id="register-password-error"></div>
                 </div>
                 
                 <div class="form-group">
-                    <input type="password" id="register-confirm-password" placeholder="Confirm Password" required>
-                    <i class="fas fa-check-circle"></i>
+                    <div class="password-container">
+                        <input type="password" id="register-confirm-password" placeholder="Confirm Password" required>
+                        <i class="fas fa-check-circle field-icon"></i>
+                        <button type="button" class="toggle-password" onclick="toggleConfirmPassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <div class="error-message" id="register-confirm-error"></div>
                 </div>
                 
@@ -552,13 +600,11 @@ a:hover {
         <div class="animated-circle circle-1"></div>
         <div class="animated-circle circle-2"></div>
         <div class="animated-circle circle-3"></div>
-        <img src="/client/src/ind_1.png" alt="Education Illustration">
+        <img src="/src/ind_1.png" alt="Education Illustration">
     </div>
 </div>
 
 <script>
-    // Replace the existing JavaScript section in your login.html with this improved version
-
 // Toggle between login and register forms
 const formContainer = document.getElementById('formContainer');
 const loginBtn = document.getElementById('loginBtn');
@@ -591,6 +637,52 @@ toLoginLink.addEventListener('click', function(e) {
     e.preventDefault();
     showLoginForm();
 });
+
+// Password toggle functions
+function toggleLoginPassword() {
+    const passwordField = document.getElementById('login-password');
+    const toggleBtn = passwordField.parentElement.querySelector('.toggle-password i');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleBtn.classList.remove('fa-eye');
+        toggleBtn.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleBtn.classList.remove('fa-eye-slash');
+        toggleBtn.classList.add('fa-eye');
+    }
+}
+
+function toggleRegisterPassword() {
+    const passwordField = document.getElementById('register-password');
+    const toggleBtn = passwordField.parentElement.querySelector('.toggle-password i');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleBtn.classList.remove('fa-eye');
+        toggleBtn.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleBtn.classList.remove('fa-eye-slash');
+        toggleBtn.classList.add('fa-eye');
+    }
+}
+
+function toggleConfirmPassword() {
+    const passwordField = document.getElementById('register-confirm-password');
+    const toggleBtn = passwordField.parentElement.querySelector('.toggle-password i');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleBtn.classList.remove('fa-eye');
+        toggleBtn.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleBtn.classList.remove('fa-eye-slash');
+        toggleBtn.classList.add('fa-eye');
+    }
+}
 
 // Show error message
 function showError(elementId, message) {
@@ -627,12 +719,18 @@ function resetButton(buttonId, originalText) {
 const inputs = document.querySelectorAll('input');
 inputs.forEach(input => {
     input.addEventListener('focus', () => {
-        input.parentElement.querySelector('i').style.color = 'var(--text-color)';
+        const fieldIcon = input.parentElement.querySelector('i.field-icon');
+        if (fieldIcon) {
+            fieldIcon.style.color = 'var(--text-color)';
+        }
     });
     
     input.addEventListener('blur', () => {
         if (!input.value) {
-            input.parentElement.querySelector('i').style.color = 'var(--accent-color)';
+            const fieldIcon = input.parentElement.querySelector('i.field-icon');
+            if (fieldIcon) {
+                fieldIcon.style.color = 'var(--accent-color)';
+            }
         }
     });
 });

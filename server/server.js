@@ -36,10 +36,10 @@ const connectDB = async () => {
             useUnifiedTopology: true,
         });
         
-        console.log('✅ Connected to MongoDB:', conn.connection.host);
-        console.log('📊 Database name:', conn.connection.name);
+        console.log(' Connected to MongoDB:', conn.connection.host);
+        console.log(' Database name:', conn.connection.name);
     } catch (error) {
-        console.error('❌ MongoDB connection error:', error.message);
+        console.error(' MongoDB connection error:', error.message);
         
         if (error.message.includes('ECONNREFUSED')) {
             console.log('\n💡 SOLUTIONS:');
@@ -385,10 +385,10 @@ app.use((req, res) => {
 
 // Start server
 server.listen(3000, () => {
-    console.log("🚀 Server running on http://localhost:3000");
-    console.log("📊 Database check: http://localhost:3000/check-db");
-    console.log("👥 Debug users: http://localhost:3000/debug/users");
-    console.log("💬 Debug messages: http://localhost:3000/debug/messages");
-    console.log("🏠 Debug messages by room: http://localhost:3000/debug/messages?room=general");
-    console.log("📂 Available rooms: http://localhost:3000/rooms");
+    console.log(" Server running on http://localhost:3000");
+    console.log(" Database check: http://localhost:3000/check-db");
+    console.log(" Debug users: http://localhost:3000/debug/users");
+    console.log(" Debug messages: http://localhost:3000/debug/messages");
+    console.log(" Debug messages by room: http://localhost:3000/debug/messages?room=general");
+    console.log(" Available rooms: http://localhost:3000/rooms");
 });
