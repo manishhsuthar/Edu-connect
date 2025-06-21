@@ -534,7 +534,14 @@ a:hover {
                 </div>
                 
                 <div class="forgot-password">
-                    <a href="#">Forgot Password?</a>
+                    <a href="forgot-password.html" onclick="goToForgotPassword()">Forgot Password?</a>
+
+<script>
+  function goToForgotPassword() {
+    const email = document.getElementById('email')?.value || '';
+    window.location.href = `/forgot-password.html?email=${encodeURIComponent(email)}`;
+  }
+</script>
                 </div>
                 
                 <button class="btn" id="login-btn">Sign In</button>
@@ -637,6 +644,16 @@ toLoginLink.addEventListener('click', function(e) {
     e.preventDefault();
     showLoginForm();
 });
+
+function goToForgotPassword() {
+    const email = document.getElementById('email').value;
+    if (!email) {
+      alert('Please enter your email first.');
+      return;
+    }
+    // Redirect to forgot-password.html with email as query param
+    window.location.href = `/forgot-password.html?email=${encodeURIComponent(email)}`;
+  }
 
 // Password toggle functions
 function toggleLoginPassword() {
