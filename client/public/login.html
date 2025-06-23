@@ -53,6 +53,7 @@ body {
     position: relative;
     z-index: 2;
     box-shadow: var(--shadow-medium);
+    overflow-y: auto;
 }
 
 .form-container {
@@ -476,6 +477,15 @@ a:hover {
     }
 }
 
+/* Username hint styles */
+.username-hint {
+    font-size: 12px;
+    color: var(--accent-color);
+    margin-top: 5px;
+    margin-left: 15px;
+    opacity: 0.8;
+}
+
 /* Responsive styles */
 @media (max-width: 992px) {
     .container {
@@ -489,6 +499,8 @@ a:hover {
     
     .form-section {
         padding: 30px 20px;
+        height: 60vh;
+        overflow-y: auto;
     }
     
     .illustration-section {
@@ -514,12 +526,12 @@ a:hover {
             <div class="login-form">
                 <h2 class="heading">Welcome Back</h2>
                 <button class="social-btn btn-google"><i class="fab fa-google"></i> Sign in with Google</button>
-                <div class="divider">or continue with email</div>
+                <div class="divider">or continue with email/username</div>
                 
                 <div class="form-group">
-                    <input type="email" id="login-email" placeholder="Email" required>
-                    <i class="fas fa-envelope field-icon"></i>
-                    <div class="error-message" id="login-email-error"></div>
+                    <input type="text" id="login-identifier" placeholder="Email or Username" required>
+                    <i class="fas fa-user field-icon"></i>
+                    <div class="error-message" id="login-identifier-error"></div>
                 </div>
                 
                 <div class="form-group">
@@ -534,14 +546,7 @@ a:hover {
                 </div>
                 
                 <div class="forgot-password">
-                    <a href="forgot-password.html" onclick="goToForgotPassword()">Forgot Password?</a>
-
-<script>
-  function goToForgotPassword() {
-    const email = document.getElementById('email')?.value || '';
-    window.location.href = `/forgot-password.html?email=${encodeURIComponent(email)}`;
-  }
-</script>
+                    <a href="#" onclick="goToForgotPassword()">Forgot Password?</a>
                 </div>
                 
                 <button class="btn" id="login-btn">Sign In</button>
@@ -561,6 +566,13 @@ a:hover {
                     <input type="text" id="register-name" placeholder="Full Name" required>
                     <i class="fas fa-user field-icon"></i>
                     <div class="error-message" id="register-name-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="register-username" placeholder="Username" required>
+                    <i class="fas fa-at field-icon"></i>
+                    <div class="username-hint">Choose a unique username (3-20 characters, letters, numbers, underscore only)</div>
+                    <div class="error-message" id="register-username-error"></div>
                 </div>
                 
                 <div class="form-group">
@@ -646,14 +658,19 @@ toLoginLink.addEventListener('click', function(e) {
 });
 
 function goToForgotPassword() {
-    const email = document.getElementById('email').value;
-    if (!email) {
-      alert('Please enter your email first.');
-      return;
+    const identifier = document.getElementById('login-identifier').value;
+    if (!identifier) {
+        alert('Please enter your email or username first.');
+        return;
     }
-    // Redirect to forgot-password.html with email as query param
-    window.location.href = `/forgot-password.html?email=${encodeURIComponent(email)}`;
-  }
+    // Check if it's an email
+    const isEmail = /^\S+@\S+\.\S+$/.test(identifier);
+    if (isEmail) {
+        window.location.href = `/forgot-password.html?email=${encodeURIComponent(identifier)}`;
+    } else {
+        window.location.href = `/forgot-password.html?username=${encodeURIComponent(identifier)}`;
+    }
+}
 
 // Password toggle functions
 function toggleLoginPassword() {
@@ -700,6 +717,43 @@ function toggleConfirmPassword() {
         toggleBtn.classList.add('fa-eye');
     }
 }
+
+// Username validation function
+function validateUsername(username) {
+    // Check length (3-20 characters)
+    if (username.length < 3 || username.length > 20) {
+        return 'Username must be between 3 and 20 characters';
+    }
+    
+    // Check for valid characters (letters, numbers, underscore only)
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        return 'Username can only contain letters, numbers, and underscores';
+    }
+    
+    // Check if it starts with a letter or underscore
+    if (!/^[a-zA-Z_]/.test(username)) {
+        return 'Username must start with a letter or underscore';
+    }
+    
+    return null; // Valid
+}
+
+// Real-time username validation
+document.getElementById('register-username').addEventListener('input', function() {
+    const username = this.value.trim();
+    const errorElement = document.getElementById('register-username-error');
+    
+    if (username) {
+        const error = validateUsername(username);
+        if (error) {
+            showError('register-username-error', error);
+        } else {
+            errorElement.style.display = 'none';
+        }
+    } else {
+        errorElement.style.display = 'none';
+    }
+});
 
 // Show error message
 function showError(elementId, message) {
@@ -757,6 +811,7 @@ document.getElementById('register-btn').addEventListener('click', async function
     clearErrors();
     
     const name = document.getElementById('register-name').value.trim();
+    const username = document.getElementById('register-username').value.trim();
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
     const confirmPassword = document.getElementById('register-confirm-password').value;
@@ -767,6 +822,17 @@ document.getElementById('register-btn').addEventListener('click', async function
     if (!name) {
         showError('register-name-error', 'Name is required');
         isValid = false;
+    }
+    
+    if (!username) {
+        showError('register-username-error', 'Username is required');
+        isValid = false;
+    } else {
+        const usernameError = validateUsername(username);
+        if (usernameError) {
+            showError('register-username-error', usernameError);
+            isValid = false;
+        }
     }
     
     if (!email) {
@@ -801,7 +867,8 @@ document.getElementById('register-btn').addEventListener('click', async function
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: name,
+                username: username,
+                name: name,
                 email: email,
                 password: password
             })
@@ -820,7 +887,14 @@ document.getElementById('register-btn').addEventListener('click', async function
             }, 1000);
         } else {
             resetButton('register-btn', 'Create Account');
-            showError('register-error', data.message || data.error || 'Registration failed');
+            // Handle specific error cases
+            if (data.message && data.message.includes('username')) {
+                showError('register-username-error', data.message);
+            } else if (data.message && data.message.includes('email')) {
+                showError('register-email-error', data.message);
+            } else {
+                showError('register-error', data.message || data.error || 'Registration failed');
+            }
         }
     } catch (error) {
         resetButton('register-btn', 'Create Account');
@@ -833,17 +907,14 @@ document.getElementById('register-btn').addEventListener('click', async function
 document.getElementById('login-btn').addEventListener('click', async function () {
     clearErrors();
     
-    const email = document.getElementById('login-email').value.trim();
+    const identifier = document.getElementById('login-identifier').value.trim();
     const password = document.getElementById('login-password').value;
 
     // Validate inputs
     let isValid = true;
     
-    if (!email) {
-        showError('login-email-error', 'Email is required');
-        isValid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
-        showError('login-email-error', 'Please enter a valid email');
+    if (!identifier) {
+        showError('login-identifier-error', 'Email or username is required');
         isValid = false;
     }
     
@@ -857,13 +928,16 @@ document.getElementById('login-btn').addEventListener('click', async function ()
     showLoading('login-btn', 'Sign In');
 
     try {
+        // Determine if identifier is email or username
+        const isEmail = /^\S+@\S+\.\S+$/.test(identifier);
+        
         const response = await fetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                email: email,
+                [isEmail ? 'email' : 'username']: identifier,
                 password: password
             })
         });
