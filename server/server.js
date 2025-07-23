@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -7,10 +8,21 @@ const cors = require("cors");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const path = require('path');
-
+const authRoutes = require('./models/auth');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
+const User = require('./models/User');
+
+
+
+// Middleware to parse JSON and URL-encoded bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+// Middleware to parse JSON bodies
+app.use('/api/auth', require("./models/auth"));
 
 // Middleware setup (order matters!)
 app.use(express.json());
@@ -26,15 +38,15 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // Static files - Updated to serve from client/public
-app.use(express.static(path.join(__dirname, "../client/public")));
+app.use(express.static(path.join(__dirname, '../client/public')));
 
 // MongoDB connection with better error handling
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect("mongodb://127.0.0.1:27017/chatApp", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        require("dotenv").config(); // Make sure this is at the top
+
+        const conn = await mongoose.connect(process.env.MONGO_URI);
+
         
         console.log(' Connected to MongoDB:', conn.connection.host);
         console.log(' Database name:', conn.connection.name);
@@ -66,14 +78,7 @@ function isAuthenticated(req, res, next) {
 }
 
 // Create user schema
-const userSchema = new mongoose.Schema({
-    username: String,
-    email: String,
-    password: String,
-    createdAt: { type: Date, default: Date.now },
-    resetPasswordToken: String,
-    resetPasswordExpires: Date
-});
+
 
 // Updated message schema with room field
 const messageSchema = new mongoose.Schema({
@@ -83,7 +88,6 @@ const messageSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now },
 });
 
-const User = mongoose.model("User", userSchema);
 const Message = mongoose.model("Message", messageSchema);
 
 // Root route to serve login page - Updated path
@@ -130,7 +134,7 @@ app.get('/rooms', isAuthenticated, async (req, res) => {
 });
 
 // DATABASE CHECK ROUTES
-// Check database connection
+
 app.get('/check-db', async (req, res) => {
     try {
         const dbState = mongoose.connection.readyState;
@@ -251,12 +255,10 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
         
+        // Compare password with hashed password
         const isMatch = await bcrypt.compare(password, user.password);
-        
-        if (!isMatch) {
-            console.log('Password mismatch for:', email);
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
+        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+
         
         req.session.user = user.username;
         console.log('Login successful, session created:', user.username);
@@ -271,83 +273,6 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
-
-app.post('/forgot-password', async (req, res) => {
-    const { email } = req.body;
-
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
-
-        // Generate a reset token
-        const token = crypto.randomBytes(20).toString('hex');
-
-        // Store token and expiry in user document
-        user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-        await user.save();
-
-        // Set up email sender (use Gmail or your SMTP)
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'Your_mail@gmail.com',
-                pass: 'App password '  
-            }
-        });
-
-        const resetURL = `http://localhost:3000/reset-password.html?token=${token}`;
-
-        await transporter.sendMail({
-            to: user.email,
-            from: 'no-reply@yourdomain.com',
-            subject: 'Password Reset',
-            html: `<p>You requested a password reset</p>
-                   <p><a href="${resetURL}">Click here to reset your password</a></p>`
-        });
-
-        res.json({ message: 'Password reset link sent to email' });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error sending email' });
-    }
-});
-
-app.post('/reset-password/:token', async (req, res) => {
-    const { token } = req.params;
-    const { password } = req.body;
-
-    try {
-        const user = await User.findOne({
-            resetPasswordToken: token,
-            resetPasswordExpires: { $gt: Date.now() }  // Not expired
-        });
-
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid or expired token' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user.password = hashedPassword;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
-
-        await user.save();
-
-        res.json({ message: 'Password reset successful' });
-
-    } catch (error) {
-        res.status(500).json({ message: 'Error resetting password' });
-    }
-});
-
-
 
 // Get user profile
 app.get("/user", async (req, res) => {
@@ -471,3 +396,8 @@ server.listen(3000, () => {
     console.log(" Debug messages by room: http://localhost:3000/debug/messages?room=general");
     console.log(" Available rooms: http://localhost:3000/rooms");
 });
+
+// Default route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/public/login.html'));
+})
