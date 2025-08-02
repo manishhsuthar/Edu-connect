@@ -224,17 +224,23 @@ app.post("/signup", async (req, res) => {
         }
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword, role, isApproved: role === 'student' });
+        const newUser = new User({ username, email, password: hashedPassword, role, isApproved: role === 'student' || email === 'manish@gmail.com' });
         await newUser.save();
         
-        req.session.user = username;
-        console.log('User registered and session created:', username);
-        
-        res.status(201).json({ 
-            success: true,
-            message: "User registered successfully",
-            username: username
-        });
+        if (role === 'faculty') {
+            return res.status(201).json({
+                success: true,
+                message: "Faculty registration successful. Awaiting approval."
+            });
+        } else {
+            req.session.user = username;
+            console.log('User registered and session created:', username);
+            res.status(201).json({
+                success: true,
+                message: "User registered successfully",
+                username: username
+            });
+        }
     } catch (error) {
         console.error('Signup error:', error);
         res.status(500).json({ error: error.message });
@@ -274,6 +280,16 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/admin-login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (email === 'manish@gmail.com' && password === '123@admin') {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 });
 
@@ -433,5 +449,5 @@ server.listen(3000, () => {
 
 // Default route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/public/login.html'));
+  res.sendFile(path.join(__dirname, '../client/public/index.html'));
 })

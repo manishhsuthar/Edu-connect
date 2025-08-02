@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="login.css">
 </head>
 <body>
+<div class="admin-login-link">
+    <a href="/admin-login.html">Admin</a>
+</div>
 <div class="container">
     <div class="form-section">
         <div class="form-container" id="formContainer">
@@ -574,14 +577,19 @@ document.getElementById('register-btn').addEventListener('click', async function
         const data = await response.json();
         
         if (data.success) {
-            // Show success state
-            const btn = document.getElementById('register-btn');
-            btn.innerHTML = '<i class="fas fa-check"></i> Success!';
-            btn.style.background = 'var(--success-color)';
-            
-            setTimeout(() => {
-                window.location.href = "/dashboard";
-            }, 1000);
+            if (role === 'faculty') {
+                resetButton('register-btn', 'Create Account');
+                showSuccess('register-error', 'Your registration is pending approval.');
+            } else {
+                // Show success state
+                const btn = document.getElementById('register-btn');
+                btn.innerHTML = '<i class="fas fa-check"></i> Success!';
+                btn.style.background = 'var(--success-color)';
+                
+                setTimeout(() => {
+                    window.location.href = "/dashboard";
+                }, 1000);
+            }
         } else {
             resetButton('register-btn', 'Create Account');
             // Handle specific error cases
