@@ -72,6 +72,20 @@
                 <h2 class="heading">Create Account</h2>
                 <button class="social-btn btn-google"><i class="fab fa-google"></i> Sign up with Google</button>
                 <div class="divider">or register with email</div>
+                <div class="form-group user-type-group">
+                    <label class="user-type-option">
+                        <input type="radio" name="register-user-type" id="register-student-radio" value="student" checked>
+                        <span class="custom-radio"></span>
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Student</span>
+                    </label>
+                    <label class="user-type-option">
+                        <input type="radio" name="register-user-type" id="register-faculty-radio" value="faculty">
+                        <span class="custom-radio"></span>
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Faculty</span>
+                    </label>
+                </div>
                 
                 <div class="form-group">
                     <input type="text" id="register-name" placeholder="Full Name" required>
@@ -496,6 +510,7 @@ document.getElementById('register-btn').addEventListener('click', async function
     const email = document.getElementById('register-email').value.trim();
     const password = document.getElementById('register-password').value;
     const confirmPassword = document.getElementById('register-confirm-password').value;
+    const role = document.querySelector('input[name="register-user-type"]:checked').value;
 
     // Validate inputs
     let isValid = true;
@@ -551,7 +566,8 @@ document.getElementById('register-btn').addEventListener('click', async function
                 username: username,
                 name: name,
                 email: email,
-                password: password
+                password: password,
+                role: role
             })
         });
 

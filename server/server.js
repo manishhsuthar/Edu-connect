@@ -212,21 +212,19 @@ app.get('/debug/messages', async (req, res) => {
 // Signup route
 app.post("/signup", async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, role } = req.body;
         
         // Check if user already exists
-        const existingUser = await User.findOne({ 
-            $or: [{ email }, { username }] 
-        });
+        const existingUser = await User.findOne({ email });
         
         if (existingUser) {
             return res.status(400).json({ 
-                message: "User already exists with this email or username" 
+                message: "User already exists with this email" 
             });
         }
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword });
+        const newUser = new User({ username, email, password: hashedPassword, role, isApproved: role === 'student' });
         await newUser.save();
         
         req.session.user = username;
@@ -260,6 +258,10 @@ app.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
+        if (user.role === 'faculty' && !user.isApproved) {
+            return res.status(401).json({ message: 'Your account has not been approved yet.' });
+        }
+
         
         req.session.user = user.username;
         console.log('Login successful, session created:', user.username);
@@ -275,7 +277,38 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Get user profile
+app.get('/unapproved-faculty', async (req, res) => {
+    try {
+        const unapprovedFaculty = await User.find({ role: 'faculty', isApproved: false });
+        res.json(unapprovedFaculty);
+    } catch (error) {
+        console.error('Error getting unapproved faculty:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/approve-faculty', async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (user.role !== 'faculty') {
+            return res.status(400).json({ message: 'User is not a faculty member' });
+        }
+
+        user.isApproved = true;
+        await user.save();
+
+        res.json({ success: true, message: 'Faculty member approved' });
+    } catch (error) {
+        console.error('Error approving faculty:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 app.get("/user", async (req, res) => {
     if (req.session.user) {
         try {
