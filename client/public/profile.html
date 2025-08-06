@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - EduConnect Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --background: oklch(0.145 0 0);
+            --foreground: oklch(0.985 0 0);
+            --card: oklch(0.205 0 0);
+            --card-foreground: oklch(0.985 0 0);
+            --border: oklch(0.269 0 0);
+            --primary: oklch(0.985 0 0);
+            --primary-foreground: oklch(0.205 0 0);
+            --destructive: #d4183d;
+            --destructive-foreground: #ffffff;
+            --radius: 0.625rem;
+        }
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+        }
+        .card {
+            background-color: var(--card);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: calc(var(--radius) - 2px);
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+        .btn-destructive {
+            background: var(--destructive);
+            color: var(--destructive-foreground);
+        }
+        .input {
+            background-color: oklch(0.269 0 0);
+            border: 1px solid var(--border);
+            border-radius: calc(var(--radius) - 4px);
+            padding: 0.5rem 0.75rem;
+            width: 100%;
+        }
+        .input:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl mx-auto">
+        <div class="card p-8 space-y-6">
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <img id="profile-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&q=80" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
+                    <button class="absolute bottom-0 right-0 bg-primary rounded-full p-2" title="Change avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9.012a2 2 0 0 0 1.61-3.405l-2.86-4.304a2 2 0 0 0-3.406 0L12 19.5V20Z"/><path d="m5 12-2.09 2.787a2 2 0 0 0 1.61 3.405H12v-2.5l-4.5-6.75a2 2 0 0 0-3.406 0L5 12Z"/><circle cx="12" cy="9" r="3"/></svg>
+                    </button>
+                </div>
+                <div>
+                    <h1 id="profile-username" class="text-3xl font-bold">User Name</h1>
+                    <p id="profile-role" class="text-lg text-gray-400">Role</p>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-semibold mb-4">Profile Information</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-400 mb-1">Email</label>
+                        <input type="email" id="profile-email" class="input" readonly>
+                    </div>
+                    <div>
+                        <label for="username-edit" class="block text-sm font-medium text-gray-400 mb-1">Username</label>
+                        <input type="text" id="profile-username-edit" class="input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-6 border-t border-border">
+                <button id="logout-button" class="btn btn-destructive">Logout</button>
+                <div>
+                    <a href="/dashboard.html" class="btn btn-secondary">Cancel</a>
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchUserProfile() {
+            try {
+                const response = await fetch('/user');
+                if (!response.ok) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                const user = await response.json();
+                document.getElementById('profile-username').textContent = user.username;
+                document.getElementById('profile-username-edit').value = user.username;
+                document.getElementById('profile-email').value = user.email;
+                document.getElementById('profile-role').textContent = user.role;
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                window.location.href = '/login.html';
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+                if (response.ok) {
+                    window.location.href = '/login.html';
+                } else {
+                    console.error('Logout failed');
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUserProfile();
+            document.getElementById('logout-button').addEventListener('click', logout);
+        });
+    </script>
+</body>
+</html>

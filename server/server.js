@@ -8,6 +8,8 @@ const cors = require("cors");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
 const path = require('path');
+const cookieParser = require('cookie-parser');
+
 const authRoutes = require('./models/auth');
 const app = express();
 const server = http.createServer(app);
@@ -19,23 +21,28 @@ const User = require('./models/User');
 // Middleware to parse JSON and URL-encoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors()); // Keep CORS here if needed for other routes
 
-
-// Middleware to parse JSON bodies
-app.use('/api/auth', require("./models/auth"));
-
-// Middleware setup (order matters!)
-app.use(express.json());
-app.use(cors());
+app.use(cookieParser()); // Add cookie-parser middleware
 
 // Session middleware
 const sessionMiddleware = session({
+    name: 'educonnect.sid', // Custom session cookie name
     secret: 'your-secret-key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { secure: false, httpOnly: true, sameSite: 'Lax' }
 });
 app.use(sessionMiddleware);
+
+// Test route to inspect cookies
+app.get('/test-cookies', (req, res) => {
+    console.log('Test Cookies Route:');
+    console.log('  req.cookies:', req.cookies);
+    res.json({ cookies: req.cookies });
+});
+
+app.use('/api/auth', require("./models/auth"));
 
 // Static files - Updated to serve from client/public
 app.use(express.static(path.join(__dirname, '../client/public')));
@@ -70,10 +77,14 @@ connectDB();
 
 // Check if user is authenticated
 function isAuthenticated(req, res, next) {
-    console.log('Checking authentication for:', req.session.user);
+    console.log('isAuthenticated middleware:');
+    console.log('  req.session:', req.session);
+    console.log('  req.session.user:', req.session.user);
+    console.log('  req.cookies:', req.cookies);
     if (req.session.user) {
         next();
     } else {
+        console.log('  User not authenticated, redirecting to login.html');
         res.redirect('/login.html');
     }
 }
@@ -99,6 +110,10 @@ app.get('/', (req, res) => {
 // Dashboard route with authentication - Updated path
 app.get('/dashboard', isAuthenticated, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/public/dashboard.html'));
+});
+
+app.get('/profile', isAuthenticated, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/public/profile.html'));
 });
 
 // NEW: Get messages for specific room/section
@@ -262,20 +277,29 @@ app.post('/login', async (req, res) => {
         
         // Compare password with hashed password
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+        if (!isMatch) {
+            console.log('Password mismatch for user:', email);
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
 
         if (user.role === 'faculty' && !user.isApproved) {
+            console.log('Faculty account not approved:', email);
             return res.status(401).json({ message: 'Your account has not been approved yet.' });
         }
 
-        
         req.session.user = user.username;
-        console.log('Login successful, session created:', user.username);
-        
-        res.json({ 
-            success: true, 
-            username: user.username,
-            message: "Login successful"
+        req.session.userId = user._id; // Store user ID in session
+        req.session.save((err) => {
+            if (err) {
+                console.error('Error saving session after login:', err);
+                return res.status(500).json({ error: 'Failed to save session' });
+            }
+            console.log('Login successful, session created and saved:', req.session.user);
+            res.json({ 
+                success: true, 
+                username: user.username,
+                message: "Login successful"
+            });
         });
     } catch (error) {
         console.error('Login error:', error);
@@ -326,17 +350,29 @@ app.post('/approve-faculty', async (req, res) => {
     }
 });
 app.get("/user", async (req, res) => {
+    console.log('User route accessed. Session user:', req.session.user);
     if (req.session.user) {
         try {
             const user = await User.findOne({ username: req.session.user });
-            res.json({ 
-                username: req.session.user,
-                email: user.email
-            });
+            if (user) {
+                console.log('User found in DB:', user.username);
+                res.json({ 
+                    username: user.username,
+                    email: user.email,
+                    role: user.role // Include role for dashboard display
+                });
+            } else {
+                console.log('User not found in DB for session user:', req.session.user);
+                req.session.destroy(() => {
+                    res.status(401).json({ error: 'Unauthorized - User not found' });
+                });
+            }
         } catch (error) {
+            console.error('Error fetching user in /user route:', error);
             res.status(500).json({ error: error.message });
         }
     } else {
+        console.log('No session user found. Unauthorized.');
         res.status(401).json({ error: 'Unauthorized' });
     }
 });
@@ -447,7 +483,3 @@ server.listen(3000, () => {
     console.log(" Available rooms: http://localhost:3000/rooms");
 });
 
-// Default route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/public/index.html'));
-})
