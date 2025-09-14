@@ -37,7 +37,7 @@ router.post('/forgot-password', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Debug log
+    console.log("process.env.RESET_TOKEN_SECRET:", process.env.RESET_TOKEN_SECRET);
     console.log("RESET_TOKEN_SECRET:", process.env.RESET_TOKEN_SECRET);
 
     const token = jwt.sign({ id: user._id }, process.env.RESET_TOKEN_SECRET, { expiresIn: '15m' });
@@ -48,7 +48,6 @@ router.post('/forgot-password', async (req, res) => {
 
     await sendResetEmail(email, link);
 
-    res.json({ message: 'Reset email sent' });
   } catch (err) {
     console.error('Error sending email:', err.message);
     res.status(500).json({ message: 'Failed to send reset email. Please try again.' });
@@ -56,7 +55,7 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 // POST /reset-password/:token
-router.post('/reset-password/:token', async (req, res) => {
+router.post('/reset-password/:token', async (req, res) =>  {
   const { token } = req.params;
   const { password } = req.body;
 
@@ -82,10 +81,15 @@ router.post('/reset-password/:token', async (req, res) => {
     const savedUser = await user.save();
     console.log("User password updated and saved:", savedUser.email);
 
-    res.json({ message: 'Password reset successful' });
-  } catch (err) {
-    console.log("Inside catch block");
+          console.log('Password reset successful for user:', user.email);
+          res.json({ message: 'Password reset successful' });
+      } catch (dbError) {
+          console.error('Error saving new password to database:', dbError);
+          return res.status(500).json({ message: 'Failed to save new password.' });
+      }
+  } catch (err)  {
     console.error('Error in reset-password:', err && err.stack ? err.stack : err);
+
     res.status(400).json({ message: 'Invalid or expired token' });
   }
 });

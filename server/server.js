@@ -44,8 +44,8 @@ app.get('/test-cookies', (req, res) => {
 
 app.use('/api/auth', require("./models/auth"));
 
-// Static files - Updated to serve from client/public
-app.use(express.static(path.join(__dirname, '../client/public')));
+// Static files - Serve from client_old/public which contains your landing and login pages
+app.use(express.static(path.join(__dirname, '../client_old/public')));
 
 // MongoDB connection with better error handling
 const connectDB = async () => {
@@ -102,18 +102,13 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model("Message", messageSchema);
 
-// Root route to serve login page - Updated path
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/public/login.html'));
-});
-
 // Dashboard route with authentication - Updated path
 app.get('/dashboard', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/public/dashboard.html'));
+    res.sendFile(path.join(__dirname, '../client_old/public/dashboard.html'));
 });
 
 app.get('/profile', isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/public/profile.html'));
+    res.sendFile(path.join(__dirname, '../client_old/public/profile.html'));
 });
 
 // NEW: Get messages for specific room/section
@@ -437,7 +432,7 @@ io.on('connection', (socket) => {
                 // Broadcast message only to users in the same room
                 const messageData = {
                     user: username,
-                    text: message,
+                    message: message,
                     room: room,
                     timestamp: newMessage.timestamp
                 };
@@ -474,12 +469,12 @@ app.use((req, res) => {
 });
 
 // Start server
-server.listen(3000, () => {
-    console.log(" Server running on http://localhost:3000");
-    console.log(" Database check: http://localhost:3000/check-db");
-    console.log(" Debug users: http://localhost:3000/debug/users");
-    console.log(" Debug messages: http://localhost:3000/debug/messages");
-    console.log(" Debug messages by room: http://localhost:3000/debug/messages?room=general");
-    console.log(" Available rooms: http://localhost:3000/rooms");
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => {
+    console.log(` Server running on http://localhost:${PORT}`);
+    console.log(` Database check: http://localhost:${PORT}/check-db`);
+    console.log(` Debug users: http://localhost:${PORT}/debug/users`);
+    console.log(` Debug messages: http://localhost:${PORT}/debug/messages`);
+    console.log(` Debug messages by room: http://localhost:${PORT}/debug/messages?room=general`);
+    console.log(` Available rooms: http://localhost:${PORT}/rooms`);
 });
-
