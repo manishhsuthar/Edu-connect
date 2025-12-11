@@ -13,7 +13,7 @@
 }
 
 .card {
-    background: var(--card);
+    background: #f0f0f0; /* Overridden from var(--card) */
     color: var(--card-foreground);
     border: 1px solid var(--border);
     border-radius: var(--radius);
