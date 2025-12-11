@@ -1,403 +1,215 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduConnect Hub - Connect. Collaborate. Succeed Together.</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
-<body class="min-h-screen">
+<body>
     <!-- Hero Section -->
-    <section class="hero-bg py-20 lg:py-32">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-8 fade-in">
-                    <div class="space-y-4">
-                        <h1 class="text-4xl lg:text-6xl font-bold tracking-tight text-white">
-                            Connect. Collaborate. 
-                            <span class="text-blue-400">Succeed Together.</span>
-                        </h1>
-                        <p class="text-lg text-gray-300 max-w-lg">
-                            EduConnect Hub brings your academic department together in one platform. 
-                            Get instant help, find project partners, and streamline communication between 
-                            students and faculty.
-                        </p>
-                    </div>
-                    
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="login.html" class="btn-primary">Join Your Department</a>
-                        <a href="#" class="btn-outline">Request Demo</a>
-                    </div>
-                    
-                    <div class="flex items-center gap-8 pt-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-400">5K+</div>
-                            <div class="text-sm text-gray-400">Active Students</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-400">50+</div>
-                            <div class="text-sm text-gray-400">Departments</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-400">95%</div>
-                            <div class="text-sm text-gray-400">Response Rate</div>
-                        </div>
-                    </div>
+    <section class="hero-bg">
+        <div class="container fade-in">
+            <h1>
+                Connect. Collaborate. 
+                <span class="text-accent">Succeed Together.</span>
+            </h1>
+            <p>
+                EduConnect Hub brings your academic department together in one platform. 
+                Get instant help, find project partners, and streamline communication between 
+                students and faculty.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="login.html" class="btn-primary">Join Your Department</a>
+                <a href="#" class="btn-outline">Request Demo</a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">5K+</div>
+                    <div class="stat-label">Active Students</div>
                 </div>
-                
-                <div class="relative fade-in">
-                    <img 
-                        src="https://i.pinimg.com/736x/b2/45/9f/b2459f1644f9ea9f0c2d459ee3a84f35.jpg"
-                        alt="Students collaborating on projects"
-                        class="rounded-2xl shadow-2xl w-full h-auto"
-                        loading="lazy"
-                    />
-                    <div class="absolute -bottom-6 -left-6 bg-gray-800 border border-gray-700 p-4 rounded-xl shadow-lg">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-green-900/50 rounded-full flex items-center justify-center">
-                                <span class="text-green-400 text-xl">✓</span>
-                            </div>
-                            <div>
-                                <div class="text-sm text-white font-medium">Question Answered</div>
-                                <div class="text-xs text-gray-400">Data Structures</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Departments</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Response Rate</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-16 lg:py-24 bg-gray-900">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-white">
-                    Everything Your Department Needs
-                </h2>
-                <p class="text-lg text-gray-300">
+    <section class="features-section">
+        <div class="container">
+            <div class="section-heading">
+                <h2>Everything Your Department Needs</h2>
+                <p>
                     EduConnect Hub solves the three biggest challenges in academic communication: 
                     finding help, collaborating on projects, and staying connected.
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="card text-center">
-                    <div class="w-16 h-16 bg-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="icon text-blue-400" viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                            <path d="M12 17h.01"></path>
-                        </svg>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-question-circle"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-white">Problem Solving</h3>
-                    <p class="text-gray-400">Post questions and get matched with faculty experts and knowledgeable peers instantly.</p>
+                    <h3>Problem Solving</h3>
+                    <p>Post questions and get matched with faculty experts and knowledgeable peers instantly.</p>
                 </div>
 
-                <div class="card text-center">
-                    <div class="w-16 h-16 bg-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="icon text-blue-400" viewBox="0 0 24 24">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                <div class="feature-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-white">Project Collaboration</h3>
-                    <p class="text-gray-400">Share ideas, find teammates, and connect with mentors for your academic projects.</p>
+                    <h3>Project Collaboration</h3>
+                    <p>Share ideas, find teammates, and connect with mentors for your academic projects.</p>
                 </div>
 
-                <div class="card text-center">
-                    <div class="w-16 h-16 bg-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="icon text-blue-400" viewBox="0 0 24 24">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-                        </svg>
+                <div class="feature-card fade-in" style="animation-delay: 0.4s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-white">Simple Interface</h3>
-                    <p class="text-gray-400">Intuitive design that makes communication effortless for students and faculty alike.</p>
+                    <h3>Simple Interface</h3>
+                    <p>Intuitive design that makes communication effortless for students and faculty alike.</p>
                 </div>
 
-                <div class="card text-center">
-                    <div class="w-16 h-16 bg-blue-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="icon text-blue-400" viewBox="0 0 24 24">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
+                <div class="feature-card fade-in" style="animation-delay: 0.6s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-white">Secure Access</h3>
-                    <p class="text-gray-400">Protected login system ensures your academic discussions stay within your department.</p>
+                    <h3>Secure Access</h3>
+                    <p>Protected login system ensures your academic discussions stay within your department.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Solutions Section -->
-    <section class="py-16 lg:py-24 bg-black">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-white">
-                    How EduConnect Hub Works
-                </h2>
-                <p class="text-lg text-gray-300">
+    <section class="solutions-section">
+        <div class="container">
+            <div class="section-heading">
+                <h2>How EduConnect Hub Works</h2>
+                <p>
                     Three powerful solutions designed to transform how your academic department communicates and collaborates.
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="card overflow-hidden">
-                    <div class="relative mb-6">
-                        <img 
-                            src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&q=80"
-                            alt="Q&A Support Hub"
-                            class="w-full h-48 object-cover rounded-lg"
-                            loading="lazy"
-                        />
-                        <span class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                            Most Popular
-                        </span>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            <h3 class="text-xl font-bold text-white">Q&A Support Hub</h3>
-                        </div>
-                        <p class="text-gray-400">Get instant answers to academic and administrative questions from faculty and peers.</p>
-                        
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Expert matching</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Real-time responses</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Question categories</span>
-                            </div>
-                        </div>
-                        
+            <div class="solutions-grid">
+                <div class="solution-card fade-in">
+                    <img src="./images/Developer_activity-pana.png" alt="Q&A Support Hub"/>
+                    <div class="solution-content">
+                        <h3>
+                            <i class="fas fa-comments icon"></i>
+                            Q&A Support Hub
+                        </h3>
+                        <p>Get instant answers to academic and administrative questions from faculty and peers.</p>
+                        <ul class="solution-list">
+                            <li><span class="dot"></span> Expert matching</li>
+                            <li><span class="dot"></span> Real-time responses</li>
+                            <li><span class="dot"></span> Question categories</li>
+                        </ul>
                         <a href="#" class="btn-primary w-full mt-4">Learn More</a>
                     </div>
                 </div>
 
-                <div class="card overflow-hidden">
-                    <div class="relative mb-6">
-                        <img 
-                            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80"
-                            alt="Project Collaboration"
-                            class="w-full h-48 object-cover rounded-lg"
-                            loading="lazy"
-                        />
-                        <span class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                            Team Building
-                        </span>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                            <h3 class="text-xl font-bold text-white">Project Collaboration</h3>
-                        </div>
-                        <p class="text-gray-400">Find teammates, share resources, and get mentorship for group projects and research.</p>
-                        
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Team formation</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Resource sharing</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Mentor matching</span>
-                            </div>
-                        </div>
-                        
+                <div class="solution-card fade-in" style="animation-delay: 0.2s;">
+                    <img src="./images/Developer_activity-pana.png" alt="Project Collaboration"/>
+                    <div class="solution-content">
+                        <h3>
+                            <i class="fas fa-users-cog icon"></i>
+                            Project Collaboration
+                        </h3>
+                        <p>Find teammates, share resources, and get mentorship for group projects and research.</p>
+                        <ul class="solution-list">
+                            <li><span class="dot"></span> Team formation</li>
+                            <li><span class="dot"></span> Resource sharing</li>
+                            <li><span class="dot"></span> Mentor matching</li>
+                        </ul>
                         <a href="#" class="btn-primary w-full mt-4">Learn More</a>
                     </div>
                 </div>
 
-                <div class="card overflow-hidden">
-                    <div class="relative mb-6">
-                        <img 
-                            src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&q=80"
-                            alt="Department Communication"
-                            class="w-full h-48 object-cover rounded-lg"
-                            loading="lazy"
-                        />
-                        <span class="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                            Stay Connected
-                        </span>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            </svg>
-                            <h3 class="text-xl font-bold text-white">Department Communication</h3>
-                        </div>
-                        <p class="text-gray-400">Centralized communication hub for announcements, discussions, and department updates.</p>
-                        
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Announcements</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Discussion boards</span>
-                            </div>
-                            <div class="flex items-center gap-2 text-sm text-gray-300">
-                                <div class="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                                <span>Event coordination</span>
-                            </div>
-                        </div>
-                        
+                <div class="solution-card fade-in" style="animation-delay: 0.4s;">
+                    <img src="./images/Developer_activity-pana.png" alt="Department Communication"/>
+                    <div class="solution-content">
+                        <h3>
+                            <i class="fas fa-bullhorn icon"></i>
+                            Department Communication
+                        </h3>
+                        <p>Centralized communication hub for announcements, discussions, and department updates.</p>
+                        <ul class="solution-list">
+                            <li><span class="dot"></span> Announcements</li>
+                            <li><span class="dot"></span> Discussion boards</li>
+                            <li><span class="dot"></span> Event coordination</li>
+                        </ul>
                         <a href="#" class="btn-primary w-full mt-4">Learn More</a>
                     </div>
                 </div>
-            </div>
-            
-            <div class="text-center mt-12">
-                <a href="#" class="btn-outline">See All Features</a>
             </div>
         </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section class="py-16 lg:py-24 bg-gray-900">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-white">
-                    Loved by Students and Faculty
-                </h2>
-                <p class="text-lg text-gray-300">
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-heading">
+                <h2>Loved by Students and Faculty</h2>
+                <p>
                     See how EduConnect Hub is transforming academic communication across departments.
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="card">
-                    <div class="flex mb-4">
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
+            <div class="features-grid">
+                <div class="testimonial-card fade-in">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    
-                    <p class="text-gray-300 mb-6 italic">
+                    <p class="quote">
                         "EduConnect Hub saved me hours of searching for help. I posted a data structures question and got a detailed answer from my professor within minutes!"
                     </p>
-                    
-                    <div class="flex items-center gap-4">
-                        <img 
-                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
-                            alt="Alex Rivera"
-                            class="w-12 h-12 rounded-full object-cover"
-                            loading="lazy"
-                        />
-                        <div>
-                            <div class="font-medium text-white">Alex Rivera</div>
-                            <div class="text-sm text-gray-400">Computer Science Student, Engineering</div>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/100?u=alex" alt="Alex Rivera"/>
+                        <div class="author-info">
+                            <div class="name">Alex Rivera</div>
+                            <div class="title">Computer Science Student</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="flex mb-4">
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
+                <div class="testimonial-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    
-                    <p class="text-gray-300 mb-6 italic">
+                    <p class="quote">
                         "Finally, a platform that makes student communication manageable. I can help more students efficiently and see exactly what they're struggling with."
                     </p>
-                    
-                    <div class="flex items-center gap-4">
-                        <img 
-                            src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&q=80"
-                            alt="Dr. Sarah Chen"
-                            class="w-12 h-12 rounded-full object-cover"
-                            loading="lazy"
-                        />
-                        <div>
-                            <div class="font-medium text-white">Dr. Sarah Chen</div>
-                            <div class="text-sm text-gray-400">Associate Professor, Computer Science</div>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/100?u=sarah" alt="Dr. Sarah Chen"/>
+                        <div class="author-info">
+                            <div class="name">Dr. Sarah Chen</div>
+                            <div class="title">Associate Professor</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="flex mb-4">
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
-                        <svg class="w-5 h-5 star-filled" viewBox="0 0 24 24">
-                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></polygon>
-                        </svg>
+                <div class="testimonial-card fade-in" style="animation-delay: 0.4s;">
+                    <div class="stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    
-                    <p class="text-gray-300 mb-6 italic">
+                    <p class="quote">
                         "Found the perfect research partner through the collaboration feature. Our project won the department's innovation award!"
                     </p>
-                    
-                    <div class="flex items-center gap-4">
-                        <img 
-                            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
-                            alt="Maria Garcia"
-                            class="w-12 h-12 rounded-full object-cover"
-                            loading="lazy"
-                        />
-                        <div>
-                            <div class="font-medium text-white">Maria Garcia</div>
-                            <div class="text-sm text-gray-400">Graduate Student, Research Lab</div>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/100?u=maria" alt="Maria Garcia"/>
+                        <div class="author-info">
+                            <div class="name">Maria Garcia</div>
+                            <div class="title">Graduate Student</div>
                         </div>
                     </div>
                 </div>
@@ -405,136 +217,58 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <!-- <section class="py-16 lg:py-24 cta-bg">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="max-w-4xl mx-auto text-center">
-                <h2 class="text-3xl lg:text-4xl font-bold mb-6 text-white">
-                    Ready to Transform Your Department?
-                </h2>
-                <p class="text-xl mb-8 text-blue-100">
-                    Join the growing community of academic departments using EduConnect Hub to 
-                    streamline communication, boost collaboration, and improve student success.
-                </p>
-                
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="#" class="bg-white text-blue-700 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium transition-colors">
-                        Start Free Trial
-                    </a>
-                    <a href="#" class="border border-white text-white hover:bg-white hover:text-blue-700 px-6 py-3 rounded-lg font-medium transition-colors">
-                        Schedule Demo
-                    </a>
-                </div>
-                
-                <div class="mt-8 text-sm text-blue-200">
-                    Free 30-day trial • No setup fees • Cancel anytime
-                </div>
-            </div>
-        </div>
-    </section> -->
-
     <!-- Footer -->
-    <footer class="bg-black text-white py-16">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="grid md:grid-cols-2 lg:grid-cols-6 gap-8">
-                <div class="lg:col-span-2">
-                    <div class="text-2xl font-bold mb-4">EduConnect Hub</div>
-                    <p class="text-gray-400 mb-6 max-w-md">
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h4>EduConnect Hub</h4>
+                    <p>
                         Connecting academic departments through seamless communication, 
-                        collaboration, and support. Transform how your students and faculty interact.
+                        collaboration, and support.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.097.118.112.221.083.343-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001.012.001z"/>
-                            </svg>
-                        </a>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
                     </div>
                 </div>
                 
-                <div>
-                    <h4 class="font-bold mb-4 text-white">Platform</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Security</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Mobile App</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API</a></li>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Mobile App</a></li>
                     </ul>
                 </div>
                 
-                <div>
-                    <h4 class="font-bold mb-4 text-white">Company</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Press</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
                     </ul>
                 </div>
                 
-                <div>
-                    <h4 class="font-bold mb-4 text-white">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Status</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Accessibility</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="font-bold mb-4 text-white">Legal</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie Policy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">GDPR</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Refund Policy</a></li>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Contact</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-                <div class="text-gray-400 mb-4 md:mb-0">
-                    © 2025 EduConnect Hub. All rights reserved.
-                </div>
-                <div class="flex gap-6 text-sm text-gray-400">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-                    <a href="#" class="hover:text-white transition-colors">Cookie Settings</a>
-                </div>
+            <div class="footer-bottom">
+                <p>© 2025 EduConnect Hub. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Add smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
         // Add scroll animations
         const observerOptions = {
             threshold: 0.1,
@@ -549,20 +283,8 @@
             });
         }, observerOptions);
 
-        // Observe all cards and major sections
-        document.querySelectorAll('.card, section > div').forEach(el => {
+        document.querySelectorAll('.fade-in').forEach(el => {
             observer.observe(el);
-        });
-
-        // Add button click feedback
-        document.querySelectorAll('button, .btn-primary, .btn-outline').forEach(button => {
-            button.addEventListener('click', function(e) {
-                // Add ripple effect or feedback here if needed
-                this.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 100);
-            });
         });
     </script>
 </body>

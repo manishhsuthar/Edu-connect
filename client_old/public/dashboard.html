@@ -11,8 +11,6 @@
             --font-size: 14px;
             --background: #ffffff;
             --foreground: oklch(0.145 0 0);
-            --card: #ffffff;
-            --card-foreground: oklch(0.145 0 0);
             --popover: oklch(1 0 0);
             --popover-foreground: oklch(0.145 0 0);
             --primary: #030213;
@@ -51,8 +49,6 @@
         .dark {
             --background: oklch(0.145 0 0);
             --foreground: oklch(0.985 0 0);
-            --card: oklch(0.145 0 0);
-            --card-foreground: oklch(0.985 0 0);
             --popover: oklch(0.145 0 0);
             --popover-foreground: oklch(0.985 0 0);
             --primary: oklch(0.985 0 0);
@@ -95,7 +91,7 @@
         }
 
         #message-input {
-            color: var(--foreground);
+            color: var(--foreground) !important;
         }
 
         .sidebar {
@@ -113,10 +109,15 @@
         }
 
         .card {
-            background: var(--card);
-            color: var(--card-foreground);
+            background-color: #ffffff;
+            color: oklch(0.145 0 0);
             border: 1px solid var(--border);
             border-radius: var(--radius);
+        }
+
+        .dark .card {
+            background-color: oklch(0.145 0 0);
+            color: oklch(0.985 0 0);
         }
 
         .btn {
@@ -309,27 +310,19 @@
             background: var(--muted);
         }
 
+        .chat-messages {
+          height: 100%;
+        }
+
         .scrollable {
+            max-height: calc(100vh - 200px);
             overflow-y: auto;
             scrollbar-width: thin;
             scrollbar-color: var(--muted) transparent;
         }
 
-        .scrollable::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .scrollable::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .scrollable::-webkit-scrollbar-thumb {
-            background: var(--muted);
-            border-radius: 3px;
-        }
-
-        .scrollable::-webkit-scrollbar-thumb:hover {
-            background: var(--muted-foreground);
+        .leading-relaxed {
+          color: var(--foreground);
         }
     </style>
 </head>
@@ -581,7 +574,7 @@
             <div class="flex-1 flex">
                 <!-- Feed -->
                 <div class="flex-1 flex flex-col">
-                    <div class="flex-1 scrollable px-6 py-4">
+                    <div class="flex-1 scrollable px-6 py-4 chat-messages">
                         <div id="posts-container" class="space-y-6 max-w-2xl">
                             <!-- Posts will be dynamically inserted here -->
                         </div>
@@ -806,6 +799,7 @@
             messageInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                this.style.color = '#000000';
             });
         }
 
@@ -1197,14 +1191,14 @@
                 const newPost = {
                     id: Date.now(),
                     user: {
-                        name: message.user,
+                        name: message.sender,
                         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
                         role: 'User',
                         online: true
                     },
                     timestamp: new Date(message.timestamp).toLocaleTimeString(),
                     type: "message",
-                    content: message.text,
+                    content: message.message,
                     tags: [],
                     likes: 0,
                     comments: 0,

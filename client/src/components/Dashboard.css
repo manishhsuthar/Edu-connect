@@ -231,3 +231,12 @@
 .scrollable::-webkit-scrollbar-thumb:hover {
     background: var(--muted-foreground);
 }
+
+.message-input-container {
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+}

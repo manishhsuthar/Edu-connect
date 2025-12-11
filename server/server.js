@@ -431,7 +431,7 @@ io.on('connection', (socket) => {
                 
                 // Broadcast message only to users in the same room
                 const messageData = {
-                    user: username,
+                    sender: username,
                     message: message,
                     room: room,
                     timestamp: newMessage.timestamp
@@ -469,7 +469,7 @@ app.use((req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(` Server running on http://localhost:${PORT}`);
     console.log(` Database check: http://localhost:${PORT}/check-db`);

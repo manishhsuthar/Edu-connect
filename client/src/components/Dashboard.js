@@ -86,8 +86,8 @@ const Dashboard = () => {
                 </div>
             </div>
             <div className="flex-1 flex">
-                <div className="flex-1 flex flex-col">
-                    <div className="flex-1 scrollable px-6 py-4">
+                <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex-1 scrollable px-6 py-4 chat-messages">
                         <div id="posts-container" className="space-y-6 max-w-2xl">
                             {messages.map((msg, index) => (
                                 <div key={index} className="card p-6 fade-in">
@@ -96,7 +96,7 @@ const Dashboard = () => {
                             ))}
                         </div>
                     </div>
-                    <div className="border-t border-border p-4">
+                    <div className="border-t border-border p-4 message-input-container">
                         <div className="flex items-end gap-3 max-w-2xl">
                             <div className="avatar avatar-sm">
                                 <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&q=80" alt="User" className="w-full h-full object-cover" />

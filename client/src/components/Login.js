@@ -93,14 +93,14 @@ const Login = () => {
                       </div>
                       
                       <div className="forgot-password">
-                          <a href="/forgot-password">Forgot Password</a>
+                          <button disabled title="Forgot Password page is under construction">Forgot Password</button>
                       </div>
                       
                       <button className="btn" onClick={handleLogin}>Sign In</button>
                       {error && <div className="error-message" style={{display: 'block'}}>{error}</div>}
                       
                       <div className="form-footer">
-                          <p>Don't have an account? <a href="#" onClick={() => setIsRegister(true)}>Register here</a></p>
+                          <p>Don't have an account? <button onClick={() => setIsRegister(true)} className="text-blue-500 hover:underline">Register here</button></p>
                       </div>
                   </div>
                   
@@ -108,7 +108,7 @@ const Login = () => {
                       {/* Registration form can be implemented here */}
                       <h2 className="heading">Create Account</h2>
                        <div className="form-footer">
-                          <p>Already have an account? <a href="#" onClick={() => setIsRegister(false)}>Sign in here</a></p>
+                          <p>Already have an account? <button onClick={() => setIsRegister(false)} className="text-blue-500 hover:underline">Sign in here</button></p>
                       </div>
                   </div>
               </div>
