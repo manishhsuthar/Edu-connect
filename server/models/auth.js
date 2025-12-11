@@ -65,16 +65,21 @@ router.post('/reset-password/:token', async (req, res) =>  {
     console.log("RESET_TOKEN_SECRET:", process.env.RESET_TOKEN_SECRET);
 
     const decoded = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
+    console.log("Decoded token:", decoded);
     const userId = decoded.id;
+    console.log("User ID from token:", userId);
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      console.log("User not found for ID:", userId);
+      return res.status(404).json({ message: 'User not found' });
+    }
+    console.log("User found:", user.email);
 
-      try {
-          const hashedPassword = await bcrypt.hash(password, 10);
-          user.password = hashedPassword;
-
-          await user.save();
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    const savedUser = await user.save();
+    console.log("User password updated and saved:", savedUser.email);
 
           console.log('Password reset successful for user:', user.email);
           res.json({ message: 'Password reset successful' });
