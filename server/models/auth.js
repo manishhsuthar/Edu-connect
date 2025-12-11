@@ -78,15 +78,11 @@ router.post('/reset-password/:token', async (req, res) =>  {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
-    const savedUser = await user.save();
-    console.log("User password updated and saved:", savedUser.email);
+    await user.save();
+    console.log("User password updated and saved:", user.email);
 
-          console.log('Password reset successful for user:', user.email);
-          res.json({ message: 'Password reset successful' });
-      } catch (dbError) {
-          console.error('Error saving new password to database:', dbError);
-          return res.status(500).json({ message: 'Failed to save new password.' });
-      }
+    console.log('Password reset successful for user:', user.email);
+    res.json({ message: 'Password reset successful' });
   } catch (err)  {
     console.error('Error in reset-password:', err && err.stack ? err.stack : err);
 
