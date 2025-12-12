@@ -399,7 +399,7 @@
                                 <polyline points="16,18 22,12 16,6"></polyline>
                                 <polyline points="8,6 2,12 8,18"></polyline>
                             </svg>
-                            <span class="flex-1 text-left truncate sidebar-text">Department A</span>
+                            <span class="flex-1 text-left truncate sidebar-text">Computer Department</span>
                             <span class="badge badge-destructive">12</span>
                         </button>
                         <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="math">
@@ -407,7 +407,7 @@
                                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
                             </svg>
-                            <span class="flex-1 text-left truncate sidebar-text">Department B</span>
+                            <span class="flex-1 text-left truncate sidebar-text">Civil Department</span>
                         </button>
                     </div>
                 </div>
@@ -705,15 +705,16 @@
         let posts = []; // This will be populated dynamically
         let onlineUsers = []; // This will be populated dynamically
         let currentUser = null; // This will store the authenticated user's data
+        let conversations = []; // This will store the conversation rooms
 
         const channels = {
             general: "General Discussion",
             announcements: "Announcements", 
             help: "Help & Support",
-            cs: "Department A",
-            math: "Department B",
+            cs: "Computer Department",
+            math: "Civil Department",
             "web-dev": "Project Alpha",
-            "ai-research": "Project Beta", 
+            "ai-research": "Project Beta",
             "mobile-app": "Project Gamma",
             "data-structures": "Study Group A",
             algorithms: "Study Group B",
@@ -726,6 +727,7 @@
         // Initialize dashboard
         async function init() {
             await fetchUserProfile(); // Fetch user profile first
+            await fetchRooms(); // Fetch rooms
             renderPosts();
             renderOnlineUsers();
             renderRecentActivity();
@@ -735,6 +737,36 @@
             setupEventListeners();
             setupSocket();
         }
+
+        // Fetch rooms
+        async function fetchRooms() {
+            try {
+                const response = await fetch('/api/conversations/rooms');
+                if (!response.ok) {
+                    throw new Error('Could not fetch rooms');
+                }
+                conversations = await response.json();
+                // Find the 'general' channel and set it as the current channel by its ID
+                const generalChannel = conversations.find(c => c.name.toLowerCase() === 'general');
+                if (generalChannel) {
+                    currentChannel = generalChannel._id;
+                }
+            } catch (error) {
+                console.error('Error fetching rooms:', error);
+            }
+        }
+
+        // Utility: slugify a room name to a channel key
+        function slugify(name) {
+            return name
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/&/g, 'and')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
 
         // Fetch user profile
         async function fetchUserProfile() {
@@ -821,22 +853,43 @@
         }
 
         // Select channel
-        function selectChannel(channel) {
-            currentChannel = channel;
+        function selectChannel(channelName) {
+            // Try to find conversation by exact name, display label, or slug
+            let conversation = conversations.find(c => c.name.toLowerCase() === channelName.toLowerCase());
+            if (!conversation) {
+                const displayName = channels[channelName] || channelName;
+                conversation = conversations.find(c => c.name.toLowerCase() === displayName.toLowerCase());
+            }
+            if (!conversation) {
+                // try slug match
+                conversation = conversations.find(c => slugify(c.name) === channelName.toLowerCase());
+            }
+            if (!conversation) {
+                console.error(`Conversation for '${channelName}' not found. Available:`, conversations.map(c=>c.name));
+                return;
+            }
+
+            // Leave the previous room
+            socket.emit('leave-room', currentChannel);
+
+            currentChannel = conversation._id;
             
             // Update active state
             document.querySelectorAll('.channel-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-channel="${channel}"]`).classList.add('active');
+            document.querySelector(`[data-channel="${channelName}"]`).classList.add('active');
             
             // Update channel title
-            document.getElementById('channel-title').textContent = channels[channel];
+            document.getElementById('channel-title').textContent = channels[channelName];
             
             // Update message placeholder
             const messageInput = document.getElementById('message-input');
-            messageInput.placeholder = `Message #${channels[channel].toLowerCase().replace(/\s+/g, '-')}`;
+            messageInput.placeholder = `Message #${channels[channelName].toLowerCase().replace(/\s+/g, '-')}`;
             
-            // Simulate loading new content (in a real app, this would fetch posts for the selected channel)
-            posts = []; // Clear posts for new channel
+            // Join the new room
+            socket.emit('join-room', currentChannel);
+            
+            // Clear posts for new channel
+            posts = []; 
             renderPosts();
         }
 
@@ -1172,7 +1225,7 @@
             const message = messageInput.value.trim();
             
             if (message && currentUser) {
-                socket.emit('message', { room: currentChannel, message: message });
+                socket.emit('message', { conversationId: currentChannel, message: message });
                 messageInput.value = '';
                 messageInput.style.height = 'auto';
             }
@@ -1187,18 +1240,23 @@
                 socket.emit('join-room', currentChannel);
             });
 
+            socket.on('error', (error) => {
+                console.error('Socket error:', error.message);
+                alert('Socket error: ' + error.message);
+            });
+
             socket.on('message', (message) => {
                 const newPost = {
                     id: Date.now(),
                     user: {
-                        name: message.sender,
+                        name: message.sender.username,
                         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
                         role: 'User',
                         online: true
                     },
-                    timestamp: new Date(message.timestamp).toLocaleTimeString(),
+                    timestamp: new Date(message.createdAt).toLocaleTimeString(),
                     type: "message",
-                    content: message.message,
+                    content: message.text,
                     tags: [],
                     likes: 0,
                     comments: 0,
@@ -1212,14 +1270,14 @@
                 posts = data.messages.map(message => ({
                     id: message._id,
                     user: {
-                        name: message.sender,
+                        name: message.sender.username,
                         avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
                         role: 'User',
                         online: true
                     },
-                    timestamp: new Date(message.timestamp).toLocaleTimeString(),
+                    timestamp: new Date(message.createdAt).toLocaleTimeString(),
                     type: "message",
-                    content: message.message,
+                    content: message.text,
                     tags: [],
                     likes: 0,
                     comments: 0,

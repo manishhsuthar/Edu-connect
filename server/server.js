@@ -10,11 +10,14 @@ const jwt = require("jsonwebtoken");
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
-const authRoutes = require('./models/auth');
+const authRoutes = require('./routes/authRoutes');
+const conversationRoutes = require('./routes/conversationRoutes');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 const User = require('./models/User');
+const Message = require('./models/Message');
+const Conversation = require('./models/Conversation');
 
 
 
@@ -42,7 +45,8 @@ app.get('/test-cookies', (req, res) => {
     res.json({ cookies: req.cookies });
 });
 
-app.use('/api/auth', require("./models/auth"));
+app.use('/api/auth', authRoutes);
+app.use('/api/conversations', conversationRoutes);
 
 // Static files - Serve from client_old/public which contains your landing and login pages
 app.use(express.static(path.join(__dirname, '../client_old/public')));
@@ -74,6 +78,37 @@ const connectDB = async () => {
 
 // Call the connection function
 connectDB();
+// Initialize default rooms/conversations
+const initializeDefaultRooms = async () => {
+    try {
+        const requiredRooms = [
+            { name: 'general', description: 'General discussion channel' },
+            { name: 'announcements', description: 'Faculty announcements (faculty-only)' },
+            { name: 'Help & Support', description: 'Get help and support' },
+            { name: 'Computer Department', description: 'Department: Computer' },
+            { name: 'Civil Department', description: 'Department: Civil' },
+            { name: 'Project Alpha', description: 'Project Alpha channel' },
+            { name: 'Project Beta', description: 'Project Beta channel' },
+            { name: 'Project Gamma', description: 'Project Gamma channel' },
+            { name: 'Study Group A', description: 'Study Group A' },
+            { name: 'Study Group B', description: 'Study Group B' },
+            { name: 'Study Group C', description: 'Study Group C' }
+        ];
+
+        for (const r of requiredRooms) {
+            const exists = await Conversation.findOne({ name: r.name, type: 'group' });
+            if (!exists) {
+                await Conversation.create({ name: r.name, description: r.description, type: 'group' });
+                console.log(`✓ Created default room: "${r.name}"`);
+            }
+        }
+    } catch (error) {
+        console.error('Error initializing default rooms:', error);
+    }
+};
+
+// Call after DB connection is established (small delay to allow connection)
+setTimeout(initializeDefaultRooms, 2000);
 
 // Check if user is authenticated
 function isAuthenticated(req, res, next) {
@@ -93,14 +128,14 @@ function isAuthenticated(req, res, next) {
 
 
 // Updated message schema with room field
-const messageSchema = new mongoose.Schema({
-    sender: String,
-    message: String,
-    room: String, // Added room field for sections
-    timestamp: { type: Date, default: Date.now },
-});
+// const messageSchema = new mongoose.Schema({
+//     sender: String,
+//     message: String,
+//     room: String, // Added room field for sections
+//     timestamp: { type: Date, default: Date.now },
+// });
 
-const Message = mongoose.model("Message", messageSchema);
+// const Message = mongoose.model("Message", messageSchema);
 
 // Dashboard route with authentication - Updated path
 app.get('/dashboard', isAuthenticated, (req, res) => {
@@ -112,37 +147,37 @@ app.get('/profile', isAuthenticated, (req, res) => {
 });
 
 // NEW: Get messages for specific room/section
-app.get('/messages/:room', isAuthenticated, async (req, res) => {
-    try {
-        const { room } = req.params;
-        const messages = await Message.find({ room: room })
-            .sort({ timestamp: 1 }) // Sort by oldest first
-            .limit(50); // Limit to last 50 messages
+// app.get('/messages/:room', isAuthenticated, async (req, res) => {
+//     try {
+//         const { room } = req.params;
+//         const messages = await Message.find({ room: room })
+//             .sort({ timestamp: 1 }) // Sort by oldest first
+//             .limit(50); // Limit to last 50 messages
         
-        res.json({
-            success: true,
-            room: room,
-            messages: messages
-        });
-    } catch (error) {
-        console.error('Error fetching messages:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
+//         res.json({
+//             success: true,
+//             room: room,
+//             messages: messages
+//         });
+//     } catch (error) {
+//         console.error('Error fetching messages:', error);
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 
-// NEW: Get all available rooms/sections
-app.get('/rooms', isAuthenticated, async (req, res) => {
-    try {
-        const rooms = await Message.distinct('room');
-        res.json({
-            success: true,
-            rooms: rooms.length > 0 ? rooms : ['general']
-        });
-    } catch (error) {
-        console.error('Error fetching rooms:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
+// // NEW: Get all available rooms/sections
+// app.get('/rooms', isAuthenticated, async (req, res) => {
+//     try {
+//         const rooms = await Message.distinct('room');
+//         res.json({
+//             success: true,
+//             rooms: rooms.length > 0 ? rooms : ['general']
+//         });
+//     } catch (error) {
+//         console.error('Error fetching rooms:', error);
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 
 // DATABASE CHECK ROUTES
 
@@ -157,7 +192,6 @@ app.get('/check-db', async (req, res) => {
         };
         
         const userCount = await User.countDocuments();
-        const messageCount = await Message.countDocuments();
         
         res.json({
             status: 'success',
@@ -166,8 +200,7 @@ app.get('/check-db', async (req, res) => {
                 connection: dbState === 1 ? 'Connected' : 'Not Connected'
             },
             collections: {
-                users: userCount,
-                messages: messageCount
+                users: userCount
             }
         });
     } catch (error) {
@@ -196,28 +229,28 @@ app.get('/debug/users', async (req, res) => {
 });
 
 // View all messages (for debugging) - Updated with room filtering
-app.get('/debug/messages', async (req, res) => {
-    try {
-        const { room } = req.query; // Optional room filter
-        const query = room ? { room: room } : {};
+// app.get('/debug/messages', async (req, res) => {
+//     try {
+//         const { room } = req.query; // Optional room filter
+//         const query = room ? { room: room } : {};
         
-        const messages = await Message.find(query)
-            .sort({ timestamp: -1 })
-            .limit(50);
+//         const messages = await Message.find(query)
+//             .sort({ timestamp: -1 })
+//             .limit(50);
             
-        res.json({
-            status: 'success',
-            room: room || 'all',
-            count: messages.length,
-            messages: messages
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+//         res.json({
+//             status: 'success',
+//             room: room || 'all',
+//             count: messages.length,
+//             messages: messages
+//         });
+//     } catch (error) {
+//         res.status(500).json({
+//             status: 'error',
+//             message: error.message
+//         });
+//     }
+// });
 
 // Signup route
 app.post("/signup", async (req, res) => {
@@ -380,74 +413,104 @@ io.use((socket, next) => {
 // UPDATED Socket.io implementation with room support
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
-    
+
     // Handle joining a room/section
-    socket.on('join-room', (roomName) => {
-        socket.join(roomName);
-        console.log(`User ${socket.request.session?.user || 'Unknown'} joined room: ${roomName}`);
-        
-        // Send recent messages for this room when user joins
-        Message.find({ room: roomName })
-            .sort({ timestamp: 1 })
-            .limit(20)
-            .then(messages => {
-                socket.emit('room-messages', {
-                    room: roomName,
-                    messages: messages
-                });
-            })
-            .catch(err => console.error('Error loading room messages:', err));
-    });
+    socket.on('join-room', async (conversationId) => {
+        try {
+                    let convId = conversationId;
+                    if (convId === 'general') {
+                        let generalConversation = await Conversation.findOne({ name: 'general' });
+                        if (generalConversation) {
+                            convId = generalConversation._id;
+                        } else {
+                            generalConversation = new Conversation({
+                                name: 'general',
+                                description: 'General discussion channel',
+                                type: 'group'
+                            });
+                            await generalConversation.save();
+                            convId = generalConversation._id;
+                        }
+                    }    
+            socket.join(convId.toString());
+            console.log(`User ${socket.request.session?.user || 'Unknown'} joined room: ${convId}`);
     
+            // Send recent messages for this room when user joins
+            Message.find({ conversationId: convId })
+                .sort({ timestamp: 1 })
+                .limit(20)
+                .populate('sender', 'username')
+                .then(messages => {
+                    socket.emit('room-messages', {
+                        room: convId,
+                        messages: messages
+                    });
+                })
+                .catch(err => console.error('Error loading room messages:', err));
+        } catch(err) {
+            console.error('Error joining room:', err);
+        }
+    });
+
     // Handle leaving a room
-    socket.on('leave-room', (roomName) => {
-        socket.leave(roomName);
-        console.log(`User left room: ${roomName}`);
+    socket.on('leave-room', (conversationId) => {
+        socket.leave(conversationId);
+        console.log(`User left room: ${conversationId}`);
     });
-    
+
     // Handle messages with room information - UPDATED
     socket.on('message', async (data) => {
         if (socket.request.session.user) {
-            const username = socket.request.session.user;
-            
-            // Handle both old format (just string) and new format (object with room)
-            let message, room;
-            if (typeof data === 'string') {
-                message = data;
-                room = 'general'; // Default room for old clients
-            } else {
-                message = data.message;
-                room = data.room || 'general';
-            }
-            
-            // Save message to database with room information
+            const userId = socket.request.session.userId;
+            let { conversationId, message } = data;
+
             try {
+                            if (conversationId === 'general') {
+                                let generalConversation = await Conversation.findOne({ name: 'general' });
+                                if (generalConversation) {
+                                    conversationId = generalConversation._id;
+                                } else {
+                                    generalConversation = new Conversation({
+                                        name: 'general',
+                                        description: 'General discussion channel',
+                                        type: 'group'
+                                    });
+                                    await generalConversation.save();
+                                    conversationId = generalConversation._id;
+                                }
+                            }
+                const conversation = await Conversation.findById(conversationId);
+                if (!conversation) {
+                    return socket.emit('error', { message: 'Conversation not found' });
+                }
+
+                if (conversation.name.toLowerCase() === 'announcements') {
+                    const user = await User.findById(userId);
+                    if (!user || user.role !== 'faculty') {
+                        return socket.emit('error', { message: 'Only faculty can post in Announcements' });
+                    }
+                }
+
                 const newMessage = new Message({
-                    sender: username,
-                    message: message,
-                    room: room
+                    conversationId: conversationId,
+                    sender: userId,
+                    text: message
                 });
                 await newMessage.save();
-                
+
+                const populatedMessage = await Message.findById(newMessage._id).populate('sender', 'username');
+
                 // Broadcast message only to users in the same room
-                const messageData = {
-                    sender: username,
-                    message: message,
-                    room: room,
-                    timestamp: newMessage.timestamp
-                };
-                
-                // Send to all users in the specific room
-                io.to(room).emit('message', messageData);
-                
-                console.log(`Message saved and sent to room ${room}:`, messageData);
+                io.to(conversationId.toString()).emit('message', populatedMessage);
+
+                console.log(`Message saved and sent to room ${conversationId}:`, populatedMessage);
             } catch (error) {
                 console.error('Error saving message:', error);
                 socket.emit('error', { message: 'Failed to save message' });
             }
         }
     });
-    
+
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
     });
@@ -474,7 +537,4 @@ server.listen(PORT, () => {
     console.log(` Server running on http://localhost:${PORT}`);
     console.log(` Database check: http://localhost:${PORT}/check-db`);
     console.log(` Debug users: http://localhost:${PORT}/debug/users`);
-    console.log(` Debug messages: http://localhost:${PORT}/debug/messages`);
-    console.log(` Debug messages by room: http://localhost:${PORT}/debug/messages?room=general`);
-    console.log(` Available rooms: http://localhost:${PORT}/rooms`);
 });
