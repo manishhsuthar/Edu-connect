@@ -147,37 +147,37 @@ app.get('/profile', isAuthenticated, (req, res) => {
 });
 
 // NEW: Get messages for specific room/section
-// app.get('/messages/:room', isAuthenticated, async (req, res) => {
-//     try {
-//         const { room } = req.params;
-//         const messages = await Message.find({ room: room })
-//             .sort({ timestamp: 1 }) // Sort by oldest first
-//             .limit(50); // Limit to last 50 messages
+app.get('/messages/:room', isAuthenticated, async (req, res) => {
+    try {
+        const { room } = req.params;
+        const messages = await Message.find({ room: room })
+            .sort({ timestamp: 1 }) // Sort by oldest first
+            .limit(50); // Limit to last 50 messages
         
-//         res.json({
-//             success: true,
-//             room: room,
-//             messages: messages
-//         });
-//     } catch (error) {
-//         console.error('Error fetching messages:', error);
-//         res.status(500).json({ error: error.message });
-//     }
-// });
+        res.json({
+            success: true,
+            room: room,
+            messages: messages
+        });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
-// // NEW: Get all available rooms/sections
-// app.get('/rooms', isAuthenticated, async (req, res) => {
-//     try {
-//         const rooms = await Message.distinct('room');
-//         res.json({
-//             success: true,
-//             rooms: rooms.length > 0 ? rooms : ['general']
-//         });
-//     } catch (error) {
-//         console.error('Error fetching rooms:', error);
-//         res.status(500).json({ error: error.message });
-//     }
-// });
+// NEW: Get all available rooms/sections
+app.get('/rooms', isAuthenticated, async (req, res) => {
+    try {
+        const rooms = await Message.distinct('room');
+        res.json({
+            success: true,
+            rooms: rooms.length > 0 ? rooms : ['general']
+        });
+    } catch (error) {
+        console.error('Error fetching rooms:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // DATABASE CHECK ROUTES
 
@@ -229,28 +229,28 @@ app.get('/debug/users', async (req, res) => {
 });
 
 // View all messages (for debugging) - Updated with room filtering
-// app.get('/debug/messages', async (req, res) => {
-//     try {
-//         const { room } = req.query; // Optional room filter
-//         const query = room ? { room: room } : {};
+app.get('/debug/messages', async (req, res) => {
+    try {
+        const { room } = req.query; // Optional room filter
+        const query = room ? { room: room } : {};
         
-//         const messages = await Message.find(query)
-//             .sort({ timestamp: -1 })
-//             .limit(50);
+        const messages = await Message.find(query)
+            .sort({ timestamp: -1 })
+            .limit(50);
             
-//         res.json({
-//             status: 'success',
-//             room: room || 'all',
-//             count: messages.length,
-//             messages: messages
-//         });
-//     } catch (error) {
-//         res.status(500).json({
-//             status: 'error',
-//             message: error.message
-//         });
-//     }
-// });
+        res.json({
+            status: 'success',
+            room: room || 'all',
+            count: messages.length,
+            messages: messages
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message
+        });
+    }
+});
 
 // Signup route
 app.post("/signup", async (req, res) => {
@@ -417,32 +417,17 @@ io.on('connection', (socket) => {
     // Handle joining a room/section
     socket.on('join-room', async (conversationId) => {
         try {
-                    let convId = conversationId;
-                    if (convId === 'general') {
-                        let generalConversation = await Conversation.findOne({ name: 'general' });
-                        if (generalConversation) {
-                            convId = generalConversation._id;
-                        } else {
-                            generalConversation = new Conversation({
-                                name: 'general',
-                                description: 'General discussion channel',
-                                type: 'group'
-                            });
-                            await generalConversation.save();
-                            convId = generalConversation._id;
-                        }
-                    }    
-            socket.join(convId.toString());
-            console.log(`User ${socket.request.session?.user || 'Unknown'} joined room: ${convId}`);
+            socket.join(conversationId.toString());
+            console.log(`User ${socket.request.session?.user || 'Unknown'} joined room: ${conversationId}`);
     
             // Send recent messages for this room when user joins
-            Message.find({ conversationId: convId })
+            Message.find({ conversationId: conversationId })
                 .sort({ timestamp: 1 })
                 .limit(20)
                 .populate('sender', 'username')
                 .then(messages => {
                     socket.emit('room-messages', {
-                        room: convId,
+                        room: conversationId,
                         messages: messages
                     });
                 })
@@ -465,20 +450,6 @@ io.on('connection', (socket) => {
             let { conversationId, message } = data;
 
             try {
-                            if (conversationId === 'general') {
-                                let generalConversation = await Conversation.findOne({ name: 'general' });
-                                if (generalConversation) {
-                                    conversationId = generalConversation._id;
-                                } else {
-                                    generalConversation = new Conversation({
-                                        name: 'general',
-                                        description: 'General discussion channel',
-                                        type: 'group'
-                                    });
-                                    await generalConversation.save();
-                                    conversationId = generalConversation._id;
-                                }
-                            }
                 const conversation = await Conversation.findById(conversationId);
                 if (!conversation) {
                     return socket.emit('error', { message: 'Conversation not found' });

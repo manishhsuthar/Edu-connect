@@ -6,6 +6,10 @@ const Login = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [registerUsername, setRegisterUsername] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+  const [registerRole, setRegisterRole] = useState('student');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -18,9 +22,9 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          [isEmail ? 'email' : 'username']: identifier, 
-          password 
+        body: JSON.stringify({
+          [isEmail ? 'email' : 'username']: identifier,
+          password
         }),
       });
 
@@ -30,6 +34,36 @@ const Login = () => {
         navigate('/dashboard');
       } else {
         setError(data.message || 'Invalid credentials');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    }
+  };
+
+  const handleRegister = async () => {
+    setError('');
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: registerUsername,
+          email: registerEmail,
+          password: registerPassword,
+          role: registerRole,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Store userId in local storage to retrieve it in ProfileSetup
+        localStorage.setItem('userId', data.userId);
+        navigate('/profile-setup');
+      } else {
+        setError(data.message || 'Registration failed');
       }
     } catch (err) {
       setError('Network error. Please try again.');
@@ -105,8 +139,34 @@ const Login = () => {
                   </div>
                   
                   <div className="register-form">
-                      {/* Registration form can be implemented here */}
                       <h2 className="heading">Create Account</h2>
+                       <div className="form-group user-type-group">
+                          <label className="user-type-option">
+                              <input type="radio" name="register-user-type" value="student" checked={registerRole === 'student'} onChange={() => setRegisterRole('student')} />
+                              <span className="custom-radio"></span>
+                              <i className="fas fa-user-graduate"></i>
+                              <span>Student</span>
+                          </label>
+                          <label className="user-type-option">
+                              <input type="radio" name="register-user-type" value="faculty" checked={registerRole === 'faculty'} onChange={() => setRegisterRole('faculty')} />
+                              <span className="custom-radio"></span>
+                              <i className="fas fa-chalkboard-teacher"></i>
+                              <span>Faculty</span>
+                          </label>
+                      </div>
+                      <div className="form-group">
+                          <input type="text" placeholder="Username" required value={registerUsername} onChange={(e) => setRegisterUsername(e.target.value)} />
+                          <i className="fas fa-user field-icon"></i>
+                      </div>
+                      <div className="form-group">
+                          <input type="email" placeholder="Email" required value={registerEmail} onChange={(e) => setRegisterEmail(e.target.value)} />
+                          <i className="fas fa-envelope field-icon"></i>
+                      </div>
+                      <div className="form-group">
+                          <input type="password" placeholder="Password" required value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} />
+                          <i className="fas fa-lock field-icon"></i>
+                      </div>
+                      <button className="btn" onClick={handleRegister}>Register</button>
                        <div className="form-footer">
                           <p>Already have an account? <button onClick={() => setIsRegister(false)} className="text-blue-500 hover:underline">Sign in here</button></p>
                       </div>

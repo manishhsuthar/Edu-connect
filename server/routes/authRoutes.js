@@ -90,4 +90,62 @@ router.post('/reset-password/:token', async (req, res) =>  {
   }
 });
 
+// POST /register
+router.post("/register", async (req, res) => {
+    try {
+        const { username, email, password, role } = req.body;
+        
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        
+        if (existingUser) {
+            return res.status(400).json({ 
+                message: "User already exists with this email" 
+            });
+        }
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ username, email, password: hashedPassword, role, isApproved: role === 'student' });
+        await newUser.save();
+        
+        res.status(201).json({
+            success: true,
+            message: "User registered successfully",
+            userId: newUser._id
+        });
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+// POST /profile-setup
+router.post('/profile-setup', async (req, res) => {
+  const { userId, enrollmentNumber, department, semester, division, college, areasOfInterest, skills, profilePhoto } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.enrollmentNumber = enrollmentNumber;
+    user.department = department;
+    user.semester = semester;
+    user.division = division;
+    user.college = college;
+    user.areasOfInterest = areasOfInterest;
+    user.skills = skills;
+    user.profilePhoto = profilePhoto;
+
+    await user.save();
+
+    res.json({ message: 'Profile setup successful' });
+  } catch (err) {
+    console.error('Error in profile-setup:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports = router;

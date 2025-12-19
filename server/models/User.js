@@ -1,4 +1,3 @@
-// filepath: /home/manish/Documents/Edu-connect_Hub/server/models/User.js
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -10,6 +9,27 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+  
+  // Student-specific fields
+  enrollmentNumber: String,
+  semester: String,
+  division: String,
+  college: String,
+  areasOfInterest: [String],
+  skills: [String],
+  profilePhoto: String,
+
+  // Faculty-specific fields
+  employeeId: String,
+  designation: String,
+  subjectsTaught: [String],
+  officeLocation: String,
+
+  // Common fields
+  department: String,
+  
+  // Profile completion status
+  isProfileComplete: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);
