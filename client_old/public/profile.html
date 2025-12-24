@@ -57,38 +57,114 @@
             padding: 0.5rem 0.75rem;
             width: 100%;
         }
+        .input[readonly] {
+            background-color: oklch(0.22 0 0);
+            cursor: not-allowed;
+        }
         .input:focus {
             outline: 2px solid var(--primary);
             outline-offset: 2px;
         }
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .tag {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-2xl mx-auto">
-        <div class="card p-8 space-y-6">
+    <div class="w-full max-w-4xl mx-auto">
+        <div class="card p-8 space-y-8">
             <div class="flex items-center gap-6">
                 <div class="relative">
                     <img id="profile-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&q=80" alt="User Avatar" class="w-24 h-24 rounded-full object-cover">
-                    <button class="absolute bottom-0 right-0 bg-primary rounded-full p-2" title="Change avatar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9.012a2 2 0 0 0 1.61-3.405l-2.86-4.304a2 2 0 0 0-3.406 0L12 19.5V20Z"/><path d="m5 12-2.09 2.787a2 2 0 0 0 1.61 3.405H12v-2.5l-4.5-6.75a2 2 0 0 0-3.406 0L5 12Z"/><circle cx="12" cy="9" r="3"/></svg>
-                    </button>
                 </div>
                 <div>
-                    <h1 id="profile-username" class="text-3xl font-bold">User Name</h1>
-                    <p id="profile-role" class="text-lg text-gray-400">Role</p>
+                    <h1 id="profile-username" class="text-3xl font-bold"></h1>
+                    <p id="profile-role" class="text-lg text-gray-400 capitalize"></p>
                 </div>
             </div>
 
             <div>
-                <h2 class="text-xl font-semibold mb-4">Profile Information</h2>
-                <div class="space-y-4">
+                <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">General Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-400 mb-1">Email</label>
                         <input type="email" id="profile-email" class="input" readonly>
                     </div>
                     <div>
                         <label for="username-edit" class="block text-sm font-medium text-gray-400 mb-1">Username</label>
-                        <input type="text" id="profile-username-edit" class="input">
+                        <input type="text" id="profile-username-edit" class="input" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Student Info -->
+            <div id="student-info" class="hidden">
+                <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">Academic Profile</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Enrollment / Roll Number</label>
+                        <p id="student-enrollment" class="text-base"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Department</label>
+                        <p id="student-department" class="text-base"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Semester</label>
+                        <p id="student-semester" class="text-base"></p>
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Division / Batch</label>
+                        <p id="student-division" class="text-base"></p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">College / Institute</label>
+                        <p id="student-college" class="text-base"></p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Areas of Interest</label>
+                        <div id="student-interests" class="tag-list"></div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Skills</label>
+                        <div id="student-skills" class="tag-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Info -->
+            <div id="faculty-info" class="hidden">
+                <h2 class="text-xl font-semibold mb-4 border-b border-border pb-2">Professional Profile</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Employee ID</label>
+                        <p id="faculty-employeeId" class="text-base"></p>
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Department</label>
+                        <p id="faculty-department" class="text-base"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Designation</label>
+                        <p id="faculty-designation" class="text-base"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Office Location</label>
+                        <p id="faculty-office" class="text-base"></p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Subjects Taught</label>
+                        <div id="faculty-subjects" class="tag-list"></div>
                     </div>
                 </div>
             </div>
@@ -96,14 +172,22 @@
             <div class="flex justify-between items-center pt-6 border-t border-border">
                 <button id="logout-button" class="btn btn-destructive">Logout</button>
                 <div>
-                    <a href="/dashboard.html" class="btn btn-secondary">Cancel</a>
-                    <button class="btn btn-primary">Save Changes</button>
+                    <a href="/dashboard.html" class="btn btn-secondary">Go to Dashboard</a>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        function createTagElements(containerId, tags) {
+            const container = document.getElementById(containerId);
+            if (!tags || tags.length === 0) {
+                container.innerHTML = '<p class="text-gray-400">Not specified</p>';
+                return;
+            }
+            container.innerHTML = tags.map(tag => `<div class="tag">${tag}</div>`).join('');
+        }
+
         async function fetchUserProfile() {
             try {
                 const response = await fetch('/user');
@@ -112,10 +196,32 @@
                     return;
                 }
                 const user = await response.json();
+                
+                // Populate general info
                 document.getElementById('profile-username').textContent = user.username;
                 document.getElementById('profile-username-edit').value = user.username;
                 document.getElementById('profile-email').value = user.email;
                 document.getElementById('profile-role').textContent = user.role;
+
+                if (user.role === 'student') {
+                    document.getElementById('student-info').classList.remove('hidden');
+                    document.getElementById('student-enrollment').textContent = user.enrollmentNumber || 'N/A';
+                    document.getElementById('student-department').textContent = user.department || 'N/A';
+                    document.getElementById('student-semester').textContent = user.semester || 'N/A';
+                    document.getElementById('student-division').textContent = user.division || 'N/A';
+                    document.getElementById('student-college').textContent = user.college || 'N/A';
+                    createTagElements('student-interests', user.areasOfInterest);
+                    createTagElements('student-skills', user.skills);
+
+                } else if (user.role === 'faculty') {
+                    document.getElementById('faculty-info').classList.remove('hidden');
+                    document.getElementById('faculty-employeeId').textContent = user.employeeId || 'N/A';
+                    document.getElementById('faculty-department').textContent = user.department || 'N/A';
+                    document.getElementById('faculty-designation').textContent = user.designation || 'N/A';
+                    document.getElementById('faculty-office').textContent = user.officeLocation || 'Not specified';
+                    createTagElements('faculty-subjects', user.subjectsTaught);
+                }
+
             } catch (error) {
                 console.error('Error fetching user profile:', error);
                 window.location.href = '/login.html';

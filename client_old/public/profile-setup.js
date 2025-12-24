@@ -1,0 +1,202 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('profile-setup-form');
+    let user = null;
+
+    // A simple tag input component
+    const createTagInput = (container, tags, placeholder) => {
+        const updateTags = () => {
+            container.innerHTML = '';
+            tags.forEach((tag, index) => {
+                const tagEl = document.createElement('div');
+                tagEl.className = 'tag';
+                tagEl.innerHTML = `
+                    ${tag}
+                    <button type="button" class="remove-tag" data-index="${index}">&times;</button>
+                `;
+                container.appendChild(tagEl);
+            });
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = placeholder;
+            container.appendChild(input);
+        };
+
+        container.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' && e.key === 'Enter' && e.target.value.trim() !== '') {
+                e.preventDefault();
+                tags.push(e.target.value.trim());
+                e.target.value = '';
+                updateTags();
+            }
+        });
+
+        container.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-tag')) {
+                const index = parseInt(e.target.getAttribute('data-index'), 10);
+                tags.splice(index, 1);
+                updateTags();
+            }
+        });
+
+        updateTags();
+    };
+    
+    const fetchUserAndRenderForm = async () => {
+        try {
+            const response = await fetch('/user');
+            if (response.ok) {
+                user = await response.json();
+                document.querySelector('.title').textContent = `Welcome, ${user.username}!`;
+                renderForm(user.role);
+            } else {
+                window.location.href = '/login.html';
+            }
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            window.location.href = '/login.html';
+        }
+    };
+
+    const renderForm = (role) => {
+        let studentFields = `
+            <div class="section">
+                <h3 class="section-header">Academic Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="enrollmentNumber">Enrollment / Roll Number</label>
+                        <input type="text" id="enrollmentNumber" name="enrollmentNumber" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department / Program</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer">Computer</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Electrical">Electrical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="semester">Semester</label>
+                        <select id="semester" name="semester" required>
+                            <option value="">Select Semester</option>
+                            ${[...Array(8).keys()].map(i => `<option value="${i+1}">${i+1}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="division">Division / Batch</label>
+                        <input type="text" id="division" name="division" required />
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="college">College / Institute Name</label>
+                        <input type="text" id="college" name="college" required />
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3 class="section-header">Professional Interests (Optional)</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="areasOfInterest">Areas of Interest</label>
+                        <div id="areasOfInterest" class="tag-input-container"></div>
+                        <p class="helper-text">e.g., Artificial Intelligence, Web Development</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="skills">Skills</label>
+                        <div id="skills" class="tag-input-container"></div>
+                        <p class="helper-text">e.g., Python, React, Project Management</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        let facultyFields = `
+            <div class="section">
+                <h3 class="section-header">Professional Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="employeeId">Employee ID</label>
+                        <input type="text" id="employeeId" name="employeeId" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="Computer">Computer</option>
+                            <option value="Mechanical">Mechanical</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Electrical">Electrical</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="designation">Designation</label>
+                        <input type="text" id="designation" name="designation" placeholder="e.g., Professor, Assistant Professor" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="officeLocation">Office Location (Optional)</label>
+                        <input type="text" id="officeLocation" name="officeLocation" placeholder="e.g., Room 301, Main Building" />
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Subjects Taught</label>
+                        <div id="subjectsTaught" class="tag-input-container"></div>
+                        <p class="helper-text">e.g., Data Structures, Database Management</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        form.innerHTML = (role === 'student' ? studentFields : facultyFields) + `
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Save and Continue</button>
+            </div>
+        `;
+
+        if (role === 'student') {
+            createTagInput(document.getElementById('areasOfInterest'), [], 'Add an interest and press Enter');
+            createTagInput(document.getElementById('skills'), [], 'Add a skill and press Enter');
+        } else {
+            createTagInput(document.getElementById('subjectsTaught'), [], 'Add a subject and press Enter');
+        }
+    };
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const profileData = Object.fromEntries(formData.entries());
+        profileData.userId = user._id;
+
+        const getTags = (id) => {
+            const container = document.getElementById(id);
+            if (!container) return [];
+            return Array.from(container.querySelectorAll('.tag')).map(tagEl => tagEl.textContent.replace('×', '').trim());
+        };
+
+        if (user.role === 'student') {
+            profileData.areasOfInterest = getTags('areasOfInterest');
+            profileData.skills = getTags('skills');
+        } else {
+            profileData.subjectsTaught = getTags('subjectsTaught');
+        }
+        
+        try {
+            const response = await fetch('/api/auth/profile-setup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profileData),
+            });
+
+            if (response.ok) {
+                window.location.href = '/dashboard.html';
+            } else {
+                const errorData = await response.json();
+                alert(`Profile setup failed: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Profile setup failed:', error);
+            alert('An error occurred during profile setup.');
+        }
+    });
+
+    fetchUserAndRenderForm();
+});

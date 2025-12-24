@@ -267,7 +267,7 @@ app.post("/signup", async (req, res) => {
         }
         
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword, role, isApproved: role === 'student' || email === 'manish@gmail.com' });
+        const newUser = new User({ username, email, password: hashedPassword, role, isApproved: role === 'student' || email === 'manish@gmail.com', isProfileComplete: false });
         await newUser.save();
         
         if (role === 'faculty') {
@@ -276,12 +276,14 @@ app.post("/signup", async (req, res) => {
                 message: "Faculty registration successful. Awaiting approval."
             });
         } else {
-            req.session.user = username;
-            console.log('User registered and session created:', username);
+            req.session.user = newUser.username;
+            req.session.userId = newUser._id;
+            console.log('User registered and session created:', newUser.username);
             res.status(201).json({
                 success: true,
+                profileSetupRequired: true,
                 message: "User registered successfully",
-                username: username
+                username: newUser.username
             });
         }
     } catch (error) {
@@ -303,7 +305,6 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
         
-        // Compare password with hashed password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.log('Password mismatch for user:', email);
@@ -316,15 +317,25 @@ app.post('/login', async (req, res) => {
         }
 
         req.session.user = user.username;
-        req.session.userId = user._id; // Store user ID in session
+        req.session.userId = user._id;
         req.session.save((err) => {
             if (err) {
                 console.error('Error saving session after login:', err);
                 return res.status(500).json({ error: 'Failed to save session' });
             }
             console.log('Login successful, session created and saved:', req.session.user);
+            
+            if (!user.isProfileComplete) {
+                return res.json({
+                    success: true,
+                    profileSetupRequired: true,
+                    message: "Profile setup required"
+                });
+            }
+
             res.json({ 
                 success: true, 
+                profileSetupRequired: false,
                 username: user.username,
                 message: "Login successful"
             });
@@ -384,11 +395,7 @@ app.get("/user", async (req, res) => {
             const user = await User.findOne({ username: req.session.user });
             if (user) {
                 console.log('User found in DB:', user.username);
-                res.json({ 
-                    username: user.username,
-                    email: user.email,
-                    role: user.role // Include role for dashboard display
-                });
+                res.json(user);
             } else {
                 console.log('User not found in DB for session user:', req.session.user);
                 req.session.destroy(() => {

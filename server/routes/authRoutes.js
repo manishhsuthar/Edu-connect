@@ -122,7 +122,7 @@ router.post("/register", async (req, res) => {
 
 // POST /profile-setup
 router.post('/profile-setup', async (req, res) => {
-  const { userId, enrollmentNumber, department, semester, division, college, areasOfInterest, skills, profilePhoto } = req.body;
+  const { userId, ...profileData } = req.body;
 
   try {
     const user = await User.findById(userId);
@@ -130,14 +130,9 @@ router.post('/profile-setup', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    user.enrollmentNumber = enrollmentNumber;
-    user.department = department;
-    user.semester = semester;
-    user.division = division;
-    user.college = college;
-    user.areasOfInterest = areasOfInterest;
-    user.skills = skills;
-    user.profilePhoto = profilePhoto;
+    // Update user with all the data sent from the frontend
+    Object.assign(user, profileData);
+    user.isProfileComplete = true;
 
     await user.save();
 
