@@ -1,71 +1,100 @@
 # EduConnect Hub
 
-## Description
+![License](https://img.shields.io/badge/license-MIT-blue.svg) ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+
 EduConnect Hub is a user-friendly communication platform designed for academic departments that helps students connect with faculty, get answers to questions, and collaborate on projects - all in one place.
 
 The platform solves three key challenges:
-1. **Finding Help**: Get quick answers to academic and administrative questions
-2. **Project Collaboration**: Find partners and mentors for your projects
-3. **Communication**: One central place for all department communication
+1.  **Finding Help**: Get quick answers to academic and administrative questions.
+2.  **Project Collaboration**: Find partners and mentors for your projects.
+3.  **Communication**: One central place for all department communication.
+
+![App Screenshot](./demo/Home_Page.png)
 
 ## Features
-- **Problem Solving**: Post questions and get matched with experts
-- **Project Collaboration**: Share ideas and find teammates
-- **Simple Interface**: Easy-to-use design for all users
-- **Secure Access**: Protected login system
 
-## How to Use
+-   **Problem Solving**: Post questions and get matched with experts.
+-   **Project Collaboration**: Share ideas and find teammates.
+-   **Simple Interface**: Easy-to-use design for all users.
+-   **Secure Access**: Protected login system with role-based access for students and faculty.
+-   **Real-time Chat**: Instant messaging for seamless communication.
 
-### For Students
-1. Create an account with your academic email
-2. Post your question or project idea
-3. Get matched with the right expert or collaborator
-4. Track status and receive notifications
+## Technologies Used
 
-### For Faculty/Staff
-1. Login with your department credentials
-2. View questions in your area of expertise
-3. Respond to student queries
-4. Mentor project teams
+-   **Frontend**: React, Tailwind CSS
+-   **Backend**: Node.js, Express.js
+-   **Database**: MongoDB
+-   **Authentication**: JSON Web Tokens (JWT)
 
-## Installation
+## Getting Started
 
-### Setup Frontend
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/educonnect-hub.git
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-# Install frontend dependencies
-cd educonnect-hub/client
-npm install
+### Prerequisites
 
-# Start frontend
-npm start
-```
+-   [Node.js](https://nodejs.org/en/) (v14 or newer)
+-   [MongoDB](https://www.mongodb.com/try/download/community) (either local or a cloud instance)
 
-### Setup Backend
-```bash
-# Install backend dependencies
-cd ../server
-npm install
+### Installation
 
-# Start the server
-node server.js
-```
+1.  **Clone the repository:**
+    ```sh
+    git clone https://github.com/Sutharmanish09/Edu-connect_Hub.git
+    cd Edu-connect_Hub
+    ```
 
-### Requirements
-- Node.js v14+
-- MongoDB
-- Modern web browser
+2.  **Set up the backend:**
+    -   Install server dependencies:
+        ```sh
+        npm install
+        ```
+    -   Create a `.env` file in the `server` directory. You can copy the example file:
+        ```sh
+        cp server/.env.example server/.env
+        ```
+    -   Update the `server/.env` file with your environment variables:
+        -   `MONGO_URI`: Your MongoDB connection string.
+        -   `JWT_SECRET`: A secret key for signing JWTs.
 
-## Technologies
-- React
-- Node.js
-- Express
-- MongoDB
-- Tailwind CSS
+3.  **Set up the frontend:**
+    -   Navigate to the client directory and install dependencies:
+        ```sh
+        cd client
+        npm install
+        ```
 
-![App Screenshot](./demo/Register.png)
+### Running the Application
+
+1.  **Start the backend server:**
+    -   From the **root** project directory, run:
+        ```sh
+        npm start
+        ```
+    -   The server will start on `http://localhost:5000` (or the port specified in your environment).
+
+2.  **Start the frontend client:**
+    -   In a new terminal, navigate to the **client** directory and run:
+        ```sh
+        npm start
+        ```
+    -   The application will open in your browser at `http://localhost:3000`.
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
 ---
 
-Made with ❤️ to improve academic communication
+Made with ❤️ to improve academic communication.
