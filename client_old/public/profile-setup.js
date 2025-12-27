@@ -94,6 +94,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="section">
+                <h3 class="section-header">Profile Photo (Optional)</h3>
+                <div class="form-group">
+                    <label for="profilePhoto">Upload a photo</label>
+                    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" />
+                </div>
+            </div>
+            <div class="section">
                 <h3 class="section-header">Professional Interests (Optional)</h3>
                 <div class="form-grid">
                     <div class="form-group">
@@ -136,6 +143,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label for="officeLocation">Office Location (Optional)</label>
                         <input type="text" id="officeLocation" name="officeLocation" placeholder="e.g., Room 301, Main Building" />
                     </div>
+                </div>
+            </div>
+            <div class="section">
+                <h3 class="section-header">Profile Photo (Optional)</h3>
+                <div class="form-group">
+                    <label for="profilePhoto">Upload a photo</label>
+                    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" />
+                </div>
+            </div>
+            <div class="section">
+                <h3 class="section-header">Subjects Taught</h3>
+                <div class="form-grid">
                     <div class="form-group full-width">
                         <label>Subjects Taught</label>
                         <div id="subjectsTaught" class="tag-input-container"></div>
@@ -162,28 +181,39 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // Use FormData to handle file upload
         const formData = new FormData(e.target);
-        const profileData = Object.fromEntries(formData.entries());
-        profileData.userId = user._id;
+        formData.append('userId', user._id);
 
         const getTags = (id) => {
             const container = document.getElementById(id);
             if (!container) return [];
             return Array.from(container.querySelectorAll('.tag')).map(tagEl => tagEl.textContent.replace('×', '').trim());
         };
+        
+        // Remove the single value that FormData creates from the tag input container div
+        formData.delete('areasOfInterest');
+        formData.delete('skills');
+        formData.delete('subjectsTaught');
 
         if (user.role === 'student') {
-            profileData.areasOfInterest = getTags('areasOfInterest');
-            profileData.skills = getTags('skills');
+            const interests = getTags('areasOfInterest');
+            interests.forEach(interest => formData.append('areasOfInterest', interest));
+            
+            const skills = getTags('skills');
+            skills.forEach(skill => formData.append('skills', skill));
         } else {
-            profileData.subjectsTaught = getTags('subjectsTaught');
+            const subjects = getTags('subjectsTaught');
+            subjects.forEach(subject => formData.append('subjectsTaught', subject));
         }
         
+        // The file from the input is already in formData if the user selected one.
+
         try {
             const response = await fetch('/api/auth/profile-setup', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(profileData),
+                // Do NOT set Content-Type header. The browser will set it to multipart/form-data with the correct boundary.
+                body: formData,
             });
 
             if (response.ok) {

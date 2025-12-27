@@ -50,6 +50,7 @@ app.use('/api/conversations', conversationRoutes);
 
 // Static files - Serve from client_old/public which contains your landing and login pages
 app.use(express.static(path.join(__dirname, '../client_old/public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // MongoDB connection with better error handling
 const connectDB = async () => {
@@ -431,7 +432,7 @@ io.on('connection', (socket) => {
             Message.find({ conversationId: conversationId })
                 .sort({ timestamp: 1 })
                 .limit(20)
-                .populate('sender', 'username')
+                .populate('sender', 'username profilePhoto role')
                 .then(messages => {
                     socket.emit('room-messages', {
                         room: conversationId,
@@ -476,7 +477,7 @@ io.on('connection', (socket) => {
                 });
                 await newMessage.save();
 
-                const populatedMessage = await Message.findById(newMessage._id).populate('sender', 'username');
+                const populatedMessage = await Message.findById(newMessage._id).populate('sender', 'username profilePhoto role');
 
                 // Broadcast message only to users in the same room
                 io.to(conversationId.toString()).emit('message', populatedMessage);

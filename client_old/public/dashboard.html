@@ -584,7 +584,7 @@
                     <div class="border-t border-border p-4">
                         <div class="flex items-end gap-3 max-w-2xl">
                             <div class="avatar avatar-sm">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&q=80" alt="User" class="w-full h-full object-cover" />
+                                <img id="message-input-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&q=80" alt="User" class="w-full h-full object-cover" />
                             </div>
                             <div class="flex-1">
                                 <textarea 
@@ -787,7 +787,9 @@
         // Update user profile UI in sidebar
         function updateUserProfileUI() {
             if (currentUser) {
-                document.querySelector('.sidebar .avatar img').src = currentUser.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&q=80'; // Default avatar
+                const profilePhoto = currentUser.profilePhoto || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&q=80';
+                document.querySelector('.sidebar .avatar img').src = profilePhoto;
+                document.getElementById('message-input-avatar').src = profilePhoto;
                 document.querySelector('.sidebar .text-sm.truncate').textContent = currentUser.username || 'User Name';
                 document.querySelector('.sidebar .text-xs.text-sidebar-foreground\/50').textContent = currentUser.role || 'Department Student';
             }
@@ -1250,8 +1252,8 @@
                     id: Date.now(),
                     user: {
                         name: message.sender.username,
-                        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
-                        role: 'User',
+                        avatar: message.sender.profilePhoto || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
+                        role: message.sender.role || 'User',
                         online: true
                     },
                     timestamp: new Date(message.createdAt).toLocaleTimeString(),
@@ -1271,8 +1273,8 @@
                     id: message._id,
                     user: {
                         name: message.sender.username,
-                        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
-                        role: 'User',
+                        avatar: message.sender.profilePhoto || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&q=80',
+                        role: message.sender.role || 'User',
                         online: true
                     },
                     timestamp: new Date(message.createdAt).toLocaleTimeString(),

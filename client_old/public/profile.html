@@ -203,6 +203,10 @@
                 document.getElementById('profile-email').value = user.email;
                 document.getElementById('profile-role').textContent = user.role;
 
+                if (user.profilePhoto) {
+                    document.getElementById('profile-avatar').src = user.profilePhoto;
+                }
+
                 if (user.role === 'student') {
                     document.getElementById('student-info').classList.remove('hidden');
                     document.getElementById('student-enrollment').textContent = user.enrollmentNumber || 'N/A';
