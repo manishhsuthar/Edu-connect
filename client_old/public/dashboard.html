@@ -521,7 +521,7 @@
                     </div>
                     <div class="flex-1 min-w-0 sidebar-text">
                         <a href="/profile.html" class="text-sm truncate">User Name</a>
-                        <div class="text-xs text-sidebar-foreground/50">Department Student</div>
+                        <div class="text-xs text-sidebar-foreground/50">Student</div>
                     </div>
                     <button class="btn-ghost p-2" title="Settings">
                         <svg class="icon" viewBox="0 0 24 24">
@@ -791,7 +791,7 @@
                 document.querySelector('.sidebar .avatar img').src = profilePhoto;
                 document.getElementById('message-input-avatar').src = profilePhoto;
                 document.querySelector('.sidebar .text-sm.truncate').textContent = currentUser.username || 'User Name';
-                document.querySelector('.sidebar .text-xs.text-sidebar-foreground\/50').textContent = currentUser.role || 'Department Student';
+                document.querySelector('.sidebar .text-xs.text-sidebar-foreground\/50').textContent = 'Role: ' + currentUser.role;
             }
         }
 
