@@ -791,7 +791,7 @@
                 document.querySelector('.sidebar .avatar img').src = profilePhoto;
                 document.getElementById('message-input-avatar').src = profilePhoto;
                 document.querySelector('.sidebar .text-sm.truncate').textContent = currentUser.username || 'User Name';
-                document.querySelector('.sidebar .text-xs.text-sidebar-foreground\/50').textContent = 'Role: ' + currentUser.role;
+                document.querySelector('.sidebar .text-xs.text-sidebar-foreground\/50').textContent = (currentUser.role && currentUser.role.toLowerCase() === 'faculty') ? 'Faculty' : 'Student';
             }
         }
 

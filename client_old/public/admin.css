@@ -7,7 +7,7 @@ body {
     line-height: 1.6;
 }
 
-h1 {
+h1, h2 {
     color: #4299e1; /* Blue heading */
     text-align: center;
     margin-bottom: 30px;
@@ -15,7 +15,12 @@ h1 {
     font-weight: bold;
 }
 
-#unapproved-faculty {
+h2 {
+    font-size: 2rem;
+    margin-top: 40px;
+}
+
+#unapproved-faculty, #all-users, #all-messages {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
@@ -23,7 +28,7 @@ h1 {
     margin: 0 auto;
 }
 
-.faculty-card {
+.card {
     background-color: #2d3748; /* Slightly lighter dark for cards */
     border: 1px solid #4a5568;
     border-radius: 0.75rem;
@@ -32,24 +37,24 @@ h1 {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.faculty-card:hover {
+.card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
 }
 
-.faculty-card h3 {
+.card h4 {
     color: #63b3ed; /* Lighter blue for names */
     margin-top: 0;
     margin-bottom: 0.5rem;
     font-size: 1.4rem;
 }
 
-.faculty-card p {
+.card p {
     margin-bottom: 0.5rem;
     font-size: 0.95rem;
 }
 
-.faculty-card button {
+.card button {
     display: inline-block;
     background-color: #4299e1; /* Blue button */
     color: white;
@@ -60,8 +65,22 @@ h1 {
     font-size: 1rem;
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
+    margin-top: 10px;
 }
 
-.faculty-card button:hover {
+.card button:hover {
     background-color: #3182ce; /* Darker blue on hover */
+}
+
+.delete-btn {
+    background-color: #e53e3e; /* Red for delete */
+}
+
+.delete-btn:hover {
+    background-color: #c53030; /* Darker red on hover */
+}
+
+.message-card .timestamp {
+    font-size: 0.8rem;
+    color: #a0aec0;
 }

@@ -9,9 +9,7 @@
 <link rel="stylesheet" href="login.css">
 </head>
 <body>
-<div class="admin-login-link">
-    <a href="/admin-login.html">Admin</a>
-</div>
+
 <div class="container">
     <div class="form-section">
         <div class="form-container" id="formContainer">
@@ -24,20 +22,7 @@
             <div class="login-form">
                 <h2 class="heading">Welcome Back</h2>
                 <h4 class="subheading">Connect with thousands of educators and learners</h4>
-                <div class="form-group user-type-group">
-                    <label class="user-type-option">
-                        <input type="radio" name="user-type" id="student-radio" value="student" checked>
-                        <span class="custom-radio"></span>
-                        <i class="fas fa-user-graduate"></i>
-                        <span>Student</span>
-                    </label>
-                    <label class="user-type-option">
-                        <input type="radio" name="user-type" id="faculty-radio" value="faculty">
-                        <span class="custom-radio"></span>
-                        <i class="fas fa-chalkboard-teacher"></i>
-                        <span>Faculty</span>
-                    </label>
-                </div>
+                
     
                 <button class="social-btn btn-google"><i class="fab fa-google"></i> Sign in with Google</button>
                 <div class="divider">or continue with email/username</div>
@@ -659,7 +644,9 @@ document.getElementById('login-btn').addEventListener('click', async function ()
             btn.innerHTML = '<i class="fas fa-check"></i> Success!';
             btn.style.background = 'var(--success-color)';
             
-            if (data.profileSetupRequired) {
+            if (data.isAdmin) {
+                window.location.href = "/admin.html";
+            } else if (data.profileSetupRequired) {
                 window.location.href = "/profile-setup.html";
             } else {
                 window.location.href = "/dashboard.html";

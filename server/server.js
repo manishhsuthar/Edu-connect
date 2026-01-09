@@ -111,6 +111,41 @@ const initializeDefaultRooms = async () => {
 // Call after DB connection is established (small delay to allow connection)
 setTimeout(initializeDefaultRooms, 2000);
 
+// Create admin account if it doesn't exist
+const createAdminAccount = async () => {
+    try {
+        const adminEmail = 'admin@gmail.com';
+        const adminExists = await User.findOne({ email: adminEmail });
+
+        if (!adminExists) {
+            const hashedPassword = await bcrypt.hash('admin.admin', 10);
+            const adminUser = new User({
+                username: 'admin',
+                email: adminEmail,
+                password: hashedPassword,
+                role: 'admin',
+                isApproved: true,
+                isProfileComplete: true
+            });
+            await adminUser.save();
+            console.log('Admin account created successfully.');
+        } else {
+            // If admin exists, ensure role is 'admin' for backward compatibility
+            if (adminExists.role !== 'admin') {
+                adminExists.role = 'admin';
+                await adminExists.save();
+                console.log('Updated existing user to admin.');
+            } else {
+                console.log('Admin account already exists.');
+            }
+        }
+    } catch (error) {
+        console.error('Error creating/updating admin account:', error);
+    }
+};
+
+setTimeout(createAdminAccount, 2500); // Give it a bit more time
+
 // Check if user is authenticated
 function isAuthenticated(req, res, next) {
     console.log('isAuthenticated middleware:');
@@ -319,6 +354,7 @@ app.post('/login', async (req, res) => {
 
         req.session.user = user.username;
         req.session.userId = user._id;
+        req.session.role = user.role; // Store role in session
         req.session.save((err) => {
             if (err) {
                 console.error('Error saving session after login:', err);
@@ -326,6 +362,14 @@ app.post('/login', async (req, res) => {
             }
             console.log('Login successful, session created and saved:', req.session.user);
             
+            if (user.role === 'admin') {
+                return res.json({
+                    success: true,
+                    isAdmin: true,
+                    message: "Admin login successful"
+                });
+            }
+
             if (!user.isProfileComplete) {
                 return res.json({
                     success: true,
@@ -347,15 +391,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/admin-login', async (req, res) => {
-    const { email, password } = req.body;
 
-    if (email === 'manish@gmail.com' && password === '123@admin') {
-        res.json({ success: true });
-    } else {
-        res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-});
 
 app.get('/unapproved-faculty', async (req, res) => {
     try {
@@ -389,6 +425,54 @@ app.post('/approve-faculty', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+function isAdmin(req, res, next) {
+    if (req.session.user && req.session.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ message: 'Forbidden: Admins only' });
+    }
+}
+
+app.get('/api/users', isAdmin, async (req, res) => {
+    try {
+        const users = await User.find({}, '-password');
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/api/users/:id', isAdmin, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        await User.findByIdAndDelete(userId);
+        // Also delete user's messages
+        await Message.deleteMany({ sender: userId });
+        res.json({ success: true, message: 'User and their messages deleted.' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/api/messages', isAdmin, async (req, res) => {
+    try {
+        const messages = await Message.find().populate('sender', 'username');
+        res.json(messages);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/api/messages/:id', isAdmin, async (req, res) => {
+    try {
+        await Message.findByIdAndDelete(req.params.id);
+        res.json({ success: true, message: 'Message deleted.' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 app.get("/user", async (req, res) => {
     console.log('User route accessed. Session user:', req.session.user);
     if (req.session.user) {
