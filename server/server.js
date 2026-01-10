@@ -82,6 +82,23 @@ connectDB();
 // Initialize default rooms/conversations
 const initializeDefaultRooms = async () => {
     try {
+        const roomMigration = {
+            'Study Group A': 'Smart India Hackathone',
+            'Study Group B': 'PU Code',
+            'Study Group C': 'IdeaThone'
+        };
+
+        for (const oldName in roomMigration) {
+            const newName = roomMigration[oldName];
+            const oldRoom = await Conversation.findOne({ name: oldName });
+            if (oldRoom) {
+                oldRoom.name = newName;
+                oldRoom.description = newName;
+                await oldRoom.save();
+                console.log(`✓ Migrated room "${oldName}" to "${newName}"`);
+            }
+        }
+
         const requiredRooms = [
             { name: 'general', description: 'General discussion channel' },
             { name: 'announcements', description: 'Faculty announcements (faculty-only)' },
@@ -91,9 +108,9 @@ const initializeDefaultRooms = async () => {
             { name: 'Project Alpha', description: 'Project Alpha channel' },
             { name: 'Project Beta', description: 'Project Beta channel' },
             { name: 'Project Gamma', description: 'Project Gamma channel' },
-            { name: 'Study Group A', description: 'Study Group A' },
-            { name: 'Study Group B', description: 'Study Group B' },
-            { name: 'Study Group C', description: 'Study Group C' }
+            { name: 'Smart India Hackathone', description: 'Smart India Hackathone' },
+            { name: 'PU Code', description: 'PU Code' },
+            { name: 'IdeaThone', description: 'IdeaThone' }
         ];
 
         for (const r of requiredRooms) {

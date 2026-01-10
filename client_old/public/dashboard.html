@@ -467,40 +467,40 @@
                         <span class="sidebar-text">STUDY GROUPS</span>
                     </button>
                     <div id="study-groups" class="mt-1 space-y-1">
-                        <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="data-structures">
+                        <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="smart-india-hackathone">
                             <svg class="icon mr-3" viewBox="0 0 24 24">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
-                            <span class="flex-1 text-left truncate sidebar-text">Study Group A</span>
+                            <span class="flex-1 text-left truncate sidebar-text">Smart India Hackathone</span>
                             <div class="flex items-center gap-1">
                                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                                 <span class="text-xs text-sidebar-foreground/50">3</span>
                             </div>
                         </button>
-                        <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="algorithms">
+                        <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="pu-code">
                             <svg class="icon mr-3" viewBox="0 0 24 24">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
-                            <span class="flex-1 text-left truncate sidebar-text">Study Group B</span>
+                            <span class="flex-1 text-left truncate sidebar-text">PU Code</span>
                             <div class="flex items-center gap-1">
                                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                                 <span class="text-xs text-sidebar-foreground/50">7</span>
                             </div>
                         </button>
-                        <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="database">
+                        <button class="channel-btn w-full flex items-center justify-start px-2 py-2 text-sm" data-channel="ideathone">
                             <svg class="icon mr-3" viewBox="0 0 24 24">
                                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
-                            <span class="flex-1 text-left truncate sidebar-text">Study Group C</span>
+                            <span class="flex-1 text-left truncate sidebar-text">IdeaThone</span>
                             <div class="flex items-center gap-1">
                                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                                 <span class="text-xs text-sidebar-foreground/50">2</span>
@@ -707,20 +707,19 @@
         let currentUser = null; // This will store the authenticated user's data
         let conversations = []; // This will store the conversation rooms
 
-        const channels = {
-            general: "General Discussion",
-            announcements: "Announcements", 
-            help: "Help & Support",
-            cs: "Computer Department",
-            math: "Civil Department",
-            "web-dev": "Project Alpha",
-            "ai-research": "Project Beta",
-            "mobile-app": "Project Gamma",
-            "data-structures": "Study Group A",
-            algorithms: "Study Group B",
-            database: "Study Group C"
-        };
-
+                const channels = {
+                    general: "General Discussion",
+                    announcements: "Announcements", 
+                    help: "Help & Support",
+                    cs: "Computer Department",
+                    math: "Civil Department",
+                    "web-dev": "Project Alpha",
+                    "ai-research": "Project Beta",
+                    "mobile-app": "Project Gamma",  
+                    "smart-india-hackathone": "Smart India Hackathone",
+                    "pu-code": "PU Code",
+                    "ideathone": "IdeaThone"
+                };
         let currentChannel = 'general';
         let sidebarCollapsed = false;
 
@@ -856,18 +855,15 @@
 
         // Select channel
         function selectChannel(channelName) {
-            // Try to find conversation by exact name, display label, or slug
-            let conversation = conversations.find(c => c.name.toLowerCase() === channelName.toLowerCase());
+            let conversation = conversations.find(c => slugify(c.name) === channelName);
+
             if (!conversation) {
                 const displayName = channels[channelName] || channelName;
                 conversation = conversations.find(c => c.name.toLowerCase() === displayName.toLowerCase());
             }
+
             if (!conversation) {
-                // try slug match
-                conversation = conversations.find(c => slugify(c.name) === channelName.toLowerCase());
-            }
-            if (!conversation) {
-                console.error(`Conversation for '${channelName}' not found. Available:`, conversations.map(c=>c.name));
+                console.error(`Conversation for '${channelName}' not found. Available conversations:`, conversations.map(c => ({ name: c.name, slug: slugify(c.name) })));
                 return;
             }
 
@@ -881,11 +877,11 @@
             document.querySelector(`[data-channel="${channelName}"]`).classList.add('active');
             
             // Update channel title
-            document.getElementById('channel-title').textContent = channels[channelName];
+            document.getElementById('channel-title').textContent = conversation.name;
             
             // Update message placeholder
             const messageInput = document.getElementById('message-input');
-            messageInput.placeholder = `Message #${channels[channelName].toLowerCase().replace(/\s+/g, '-')}`;
+            messageInput.placeholder = `Message #${conversation.name.toLowerCase().replace(/\s+/g, '-')}`;
             
             // Join the new room
             socket.emit('join-room', currentChannel);
