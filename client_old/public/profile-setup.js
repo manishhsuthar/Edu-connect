@@ -152,11 +152,23 @@
                     </div>
                     <div class="form-group">
                         <label for="designation">Designation</label>
-                        <input type="text" id="designation" name="designation" placeholder="e.g., Professor, Assistant Professor" required />
+                        <select id="designation" name="designation" required>
+                            <option value="">Select Designation</option>
+                            <option value="Professor">Professor</option>
+                            <option value="Associate Professor">Associate Professor</option>
+                            <option value="Assistant Professor">Assistant Professor</option>
+                            <option value="Lecturer">Lecturer</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="officeLocation">Office Location (Optional)</label>
-                        <input type="text" id="officeLocation" name="officeLocation" placeholder="e.g., Room 301, Main Building" />
+                        <select id="officeLocation" name="officeLocation">
+                            <option value="">Select Office Location</option>
+                            <option value="Building A - Room 101">DS Building - Room 111</option>
+                            <option value="Building B - Room 202">PPI Building - Room 202</option>
+                            <option value="Building C - Room 303">GYM Building - Room 303</option>
+                            <option value="Building D - Room 404">PIT Building - Room 404</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -172,7 +184,8 @@
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label>Subjects Taught</label>
-                        <div id="subjectsTaught" class="tag-input-container"></div>
+                        <div id="subjectsTaught" class="tag-input-container">
+                        </div>
                         <p class="helper-text">e.g., Data Structures, Database Management</p>
                     </div>
                 </div>
