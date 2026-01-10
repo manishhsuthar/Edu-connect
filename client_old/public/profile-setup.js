@@ -85,11 +85,26 @@
                     </div>
                     <div class="form-group">
                         <label for="division">Division / Batch</label>
-                        <input type="text" id="division" name="division" required />
+                        <select id="division" name="division" required>
+                            <option value="">Select Division</option>
+                            <option value="QA">QA</option>
+                            <option value="QB">QB</option>
+                            <option value="QC">QC</option>
+                            <option value="QD">QD</option>
+                            <option value="QE">QE</option>
+                            <option value="QF">QF</option>
+                            <option value="QG">QG</option>
+                        </select>
                     </div>
                     <div class="form-group full-width">
                         <label for="college">College / Institute Name</label>
-                        <input type="text" id="college" name="college" required />
+                        <select id="college" name="college" required>
+                            <option value="">Select College</option>
+                            <option value="Engineering College A">PIET</option>
+                            <option value="Engineering College B">PIET-DS</option>
+                            <option value="Engineering College C">PIT</option>
+                            <option value="Engineering College D">PPI</option>
+                        </select>
                     </div>
                 </div>
             </div>
